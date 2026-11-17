@@ -14,3 +14,21 @@ write_refused = "Ditolak: pembaca GitHub hanya menghantar permintaan GET (diteri
 rate_limited = "Had kadar GitHub dicapai; cuba lagi selepas {reset}."
 http_error = "GitHub memulangkan HTTP {status} untuk {path}."
 too_many_pages = "Berhenti selepas {pages} halaman untuk {path}."
+
+[actions]
+FOLLOW_UP_DUE = "Susulan perlu dihantar"
+TAKEOVER_ALLOWED = "Boleh diambil alih"
+MAINTAINER_REPLY_PENDING = "Menunggu jawapan penyelenggara"
+READY_TO_VERIFY = "Sedia untuk disahkan"
+NO_ACTION = "Tiada tindakan"
+
+[reasons]
+request_unanswered = "permintaan penyelenggara belum dijawab sejak {requested_on}"
+eta_passed = "tarikh yang dijanjikan {agreed_eta} sudah lepas tanpa kemas kini"
+follow_up_unanswered = "susulan dihantar {followed_up_on}; boleh diambil alih mulai {takeover_from}"
+follow_up_sent = "susulan dihantar {followed_up_on}; tunggu hingga {takeover_from}"
+within_window = "masih dalam tempoh yang dipersetujui"
+contributor_waiting = "penyumbang bertanya pada {asked_on}; jawapan dijangka sebelum {reply_due}"
+fix_released = "pembaikan dikeluarkan dalam {release_tag} pada {released_on}"
+unclear = "bacaan benang ini tidak dapat disahkan"
+nothing_pending = "tiada siapa yang terlewat"

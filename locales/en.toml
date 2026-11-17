@@ -14,3 +14,21 @@ write_refused = "Refused: the GitHub reader only sends GET requests (got {method
 rate_limited = "GitHub rate limit reached; try again after {reset}."
 http_error = "GitHub returned HTTP {status} for {path}."
 too_many_pages = "Stopped after {pages} pages for {path}."
+
+[actions]
+FOLLOW_UP_DUE = "Follow-up due"
+TAKEOVER_ALLOWED = "Take-over allowed"
+MAINTAINER_REPLY_PENDING = "Maintainer reply pending"
+READY_TO_VERIFY = "Ready to verify"
+NO_ACTION = "No action"
+
+[reasons]
+request_unanswered = "maintainer request unanswered since {requested_on}"
+eta_passed = "agreed date {agreed_eta} has passed without an update"
+follow_up_unanswered = "follow-up sent {followed_up_on}; take-over allowed from {takeover_from}"
+follow_up_sent = "follow-up sent {followed_up_on}; waiting until {takeover_from}"
+within_window = "still inside the agreed window"
+contributor_waiting = "contributor asked on {asked_on}; reply expected by {reply_due}"
+fix_released = "fix shipped in {release_tag} on {released_on}"
+unclear = "could not verify the reading of this thread"
+nothing_pending = "nobody is overdue"
