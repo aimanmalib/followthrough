@@ -1,0 +1,27 @@
+[project]
+name = "followthrough"
+version = "0.0.1"
+description = "An OpenMinion agent that tells maintainers who is waiting on whom, drafts follow-ups, and waits for a human to approve them."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "openminion==0.1.23",
+]
+
+[project.scripts]
+followthrough = "followthrough.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["uv_build>=0.9,<0.13"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
