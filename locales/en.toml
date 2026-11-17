@@ -32,3 +32,12 @@ contributor_waiting = "contributor asked on {asked_on}; reply expected by {reply
 fix_released = "fix shipped in {release_tag} on {released_on}"
 unclear = "could not verify the reading of this thread"
 nothing_pending = "nobody is overdue"
+
+[budget]
+unpriced_model = "No price for model {model} in config/prices.toml; refusing to run it."
+sweep_limit = "Stopped: the next model turn could pass the per-sweep limit of USD {limit} (spent USD {spent})."
+total_limit = "Stopped: the next model turn could pass the total limit of USD {limit} (spent USD {spent})."
+
+[reader]
+invalid_output = "the model reply was not a valid thread state"
+provider_error = "the model provider failed"

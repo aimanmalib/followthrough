@@ -32,3 +32,12 @@ contributor_waiting = "penyumbang bertanya pada {asked_on}; jawapan dijangka seb
 fix_released = "pembaikan dikeluarkan dalam {release_tag} pada {released_on}"
 unclear = "bacaan benang ini tidak dapat disahkan"
 nothing_pending = "tiada siapa yang terlewat"
+
+[budget]
+unpriced_model = "Tiada harga untuk model {model} dalam config/prices.toml; model itu tidak dijalankan."
+sweep_limit = "Berhenti: giliran model seterusnya boleh melepasi had setiap sapuan USD {limit} (sudah dibelanja USD {spent})."
+total_limit = "Berhenti: giliran model seterusnya boleh melepasi had keseluruhan USD {limit} (sudah dibelanja USD {spent})."
+
+[reader]
+invalid_output = "jawapan model bukan keadaan benang yang sah"
+provider_error = "penyedia model gagal"

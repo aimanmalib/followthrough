@@ -52,8 +52,10 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "usd_max_total",
         "spend_ledger",
         "chars_per_token_estimate",
+        "turn_reserve_usd",
     ),
     "prices": ("models",),
+    "prompts": ("reader.instructions", "reader.message"),
 }
 
 

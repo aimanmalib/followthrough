@@ -3,3 +3,4 @@ usd_max_per_sweep = 1.00
 usd_max_total = 20.00
 spend_ledger = "state/spend.json"
 chars_per_token_estimate = 4   # used only when provider telemetry reports 0 tokens
+turn_reserve_usd = 0.02        # held back before each reader turn; raised to the largest turn cost seen
