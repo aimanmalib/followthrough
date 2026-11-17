@@ -1,0 +1,29 @@
+# Public CI: locked install, offline tests, and an offline fixture sweep in both languages.
+# No secrets and no network in tests; the model reader is exercised against a local fake server.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NO_COLOR: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.5"
+      - run: uv sync --frozen
+      - run: uv run --frozen pytest -q
+      - name: Fixture sweep (English)
+        run: uv run --frozen followthrough sweep --fixture --lang en
+      - name: Fixture sweep (Malay)
+        run: uv run --frozen followthrough sweep --fixture --lang ms
