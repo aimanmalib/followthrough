@@ -42,3 +42,23 @@ and the token counts OpenMinion reports.
 the planted fake quote rejected, a prose reply counted as failed, a reading recovered from
 `submit_reading`, zero-token telemetry estimated, a provider error counted, and a budget stop with
 no request sent. `tests/test_spend.py` covers holds, limits across sweeps, estimates and the ledger.
+
+## Fixture sweep (offline)
+
+`followthrough sweep --fixture` on 2026-11-17 (saved readings, clock 2026-11-20T09:00:00Z, no key,
+no network), same digest counts in `--lang en` and `--lang ms`:
+
+| Action | Threads |
+|---|---:|
+| Follow-up due | 2 |
+| Take-over allowed | 1 |
+| Maintainer reply pending | 1 |
+| Ready to verify | 1 |
+| No action | 1 |
+
+6 threads read, 0 readings rejected by the quote check, 0 threads unread; every thread got the
+action the fixture expects. With the planted fake quote swapped into thread 101's reading, the
+guard rejects it and the digest counts 1 rejection (thread 101 becomes "No action", reason
+"unclear"). `tests/test_digest.py` (19 cases) covers these, the Malay output, the absence of any
+thread text in the digest, the partial digest, and live-mode usage errors stopping before any
+network request.
