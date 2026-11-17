@@ -1,0 +1,30 @@
+# Follow-up policy. Windows come from the target repo's CONTRIBUTING guide unless marked "ours".
+# Every value here is read at run time; nothing in src/ hard-codes a window, label or association.
+
+[windows]
+follow_up_days = 7          # maintainer request to contributor open this long without reply -> FOLLOW_UP_DUE
+after_follow_up_days = 3    # last maintainer follow-up unanswered this long -> TAKEOVER_ALLOWED
+maintainer_reply_days = 7   # OURS: CONTRIBUTING sets no window for maintainer replies (digest only, no draft)
+
+[labels]
+awaiting_release = "status:awaiting-release"   # READY_TO_VERIFY candidate label
+status_prefix = "status:"                      # labels used for label-agreement measurement
+
+# Map of status label -> expected waiting_on (maintainer | contributor | release | nobody | unclear).
+# Filled in when the label-agreement measurement is set up; empty means "not measured".
+[labels.waiting_on]
+
+[roles]
+# GitHub author_association values that count as maintainer.
+maintainer_associations = ["OWNER", "MEMBER", "COLLABORATOR"]
+# Logins of maintainers whose membership is hidden (author_association shows CONTRIBUTOR or NONE).
+maintainers_extra = []
+
+[ledger]
+expiry_days = 30            # a reminder record older than this no longer suppresses a new draft
+namespace_prefix = "followthrough"
+
+[github]
+api_base = "https://api.github.com"
+per_page = 100
+snapshot_dir = "state/snapshots"

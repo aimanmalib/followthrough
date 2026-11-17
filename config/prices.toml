@@ -1,0 +1,8 @@
+# USD per million tokens.
+[models."claude-haiku-5-5"]
+input_per_mtok = 0.10
+output_per_mtok = 0.50
+
+[models."claude-sonnet-5-5"]
+input_per_mtok = 2.00
+output_per_mtok = 10.00

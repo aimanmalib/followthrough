@@ -1,0 +1,23 @@
+# Model profiles. agents.json for OpenMinion is generated from this file.
+provider = "anthropic"
+agents_json = "state/agents.json"
+max_concurrency = 4          # subagents running at once, one per changed thread
+
+[profiles.reader]
+model = "claude-haiku-5-5"   # reads one thread, returns ThreadState
+
+[profiles.drafter]
+model = "claude-sonnet-5-5"  # writes one follow-up draft
+max_words = 120
+
+# Fallback order when the built-in provider adapter fails. Each switch is recorded as a decision.
+[[fallback]]
+provider = "custom-anthropic-compatible"
+base_url = "https://api.anthropic.com"
+key_env = "ANTHROPIC_API_KEY"
+
+[[fallback]]
+provider = "custom-openai-compatible"
+base_url = "https://router.huggingface.co/v1"
+key_env = "HF_TOKEN"
+model_match = "Qwen3"        # first tool-capable model whose id contains this

@@ -1,0 +1,8 @@
+# The only write path (post_comment) checks, in this order: stop file, allow-list, human approval.
+stop_env = "PERANAN_HENTI"   # env var naming a stop file; if that file exists, posting exits
+stop_file = "state/STOP"     # repo-local stop file, same effect
+stop_exit_code = 5
+
+# Repos the agent may comment on, after approval. Empty = posting is off everywhere.
+# Only the private sandbox repo may ever appear here; third-party repos are read-only.
+allow_post_repos = []

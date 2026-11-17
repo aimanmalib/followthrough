@@ -1,0 +1,10 @@
+[cli]
+description = "Follow-Through: siapa menunggu siapa dalam isu dan pull request anda."
+version = "followthrough {version}"
+lang_help = "Bahasa keluaran (en atau ms)."
+not_ready = "Arahan ini belum tersedia."
+
+[errors]
+config_missing_file = "Fail config tiada: {path}"
+config_missing_key = "Kunci config tiada: {file} -> {key}"
+locale_unknown = "Bahasa tidak dikenali: {lang}"
