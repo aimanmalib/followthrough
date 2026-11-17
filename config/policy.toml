@@ -20,6 +20,9 @@ maintainer_associations = ["OWNER", "MEMBER", "COLLABORATOR"]
 # Logins of maintainers whose membership is hidden (author_association shows CONTRIBUTOR or NONE).
 maintainers_extra = []
 
+[guard]
+quote_max_chars = 200       # longest quote the reader may return in ThreadState (product requirement 4.6)
+
 [ledger]
 expiry_days = 30            # a reminder record older than this no longer suppresses a new draft
 namespace_prefix = "followthrough"

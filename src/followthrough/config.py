@@ -26,6 +26,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "labels.waiting_on",
         "roles.maintainer_associations",
         "roles.maintainers_extra",
+        "guard.quote_max_chars",
         "ledger.expiry_days",
         "ledger.namespace_prefix",
         "github.api_base",

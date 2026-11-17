@@ -1,0 +1,27 @@
+{
+ "note": "Hand-written reader output for fixtures/sandbox-repo.json: what a correct reader returns for each synthetic thread. Used as the expected ThreadState in tests and as canned model answers for offline runs.",
+ "states": [
+  {"number": 101, "kind": "defect", "waiting_on": "contributor",
+   "open_request_quote": "Could you add a minimal script that reproduces this with the default config?",
+   "open_request_by": "maintainer", "open_request_at": "2026-11-02T10:00:00Z",
+   "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": null, "linked_pr": null, "confidence": 0.9},
+  {"number": 102, "kind": "enhancement", "waiting_on": "contributor",
+   "open_request_quote": null, "open_request_by": null, "open_request_at": null,
+   "agreed_eta": "2026-11-12", "agreed_eta_quote": "Yes, I will open a PR by 2026-11-12.",
+   "last_follow_up_at": null, "linked_pr": null, "confidence": 0.85},
+  {"number": 103, "kind": "defect", "waiting_on": "contributor",
+   "open_request_quote": "Please rebase on main and fix the failing scheduler test.",
+   "open_request_by": "maintainer", "open_request_at": "2026-10-20T13:20:00Z",
+   "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": "2026-11-10T11:00:00Z", "linked_pr": null, "confidence": 0.9},
+  {"number": 104, "kind": "enhancement", "waiting_on": "maintainer",
+   "open_request_quote": "Should the cache key include the model name, or is the provider enough?",
+   "open_request_by": "contributor", "open_request_at": "2026-11-06T18:30:00Z",
+   "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": null, "linked_pr": null, "confidence": 0.85},
+  {"number": 105, "kind": "defect", "waiting_on": "release",
+   "open_request_quote": null, "open_request_by": null, "open_request_at": null,
+   "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": null, "linked_pr": 110, "confidence": 0.9},
+  {"number": 106, "kind": "question", "waiting_on": "maintainer",
+   "open_request_quote": null, "open_request_by": null, "open_request_at": null,
+   "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": null, "linked_pr": null, "confidence": 0.7}
+ ]
+}
