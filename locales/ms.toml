@@ -8,3 +8,9 @@ not_ready = "Arahan ini belum tersedia."
 config_missing_file = "Fail config tiada: {path}"
 config_missing_key = "Kunci config tiada: {file} -> {key}"
 locale_unknown = "Bahasa tidak dikenali: {lang}"
+
+[github]
+write_refused = "Ditolak: pembaca GitHub hanya menghantar permintaan GET (diterima {method})."
+rate_limited = "Had kadar GitHub dicapai; cuba lagi selepas {reset}."
+http_error = "GitHub memulangkan HTTP {status} untuk {path}."
+too_many_pages = "Berhenti selepas {pages} halaman untuk {path}."

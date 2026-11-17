@@ -8,3 +8,9 @@ not_ready = "This command is not available yet."
 config_missing_file = "Config file not found: {path}"
 config_missing_key = "Config key missing: {file} -> {key}"
 locale_unknown = "Unknown language: {lang}"
+
+[github]
+write_refused = "Refused: the GitHub reader only sends GET requests (got {method})."
+rate_limited = "GitHub rate limit reached; try again after {reset}."
+http_error = "GitHub returned HTTP {status} for {path}."
+too_many_pages = "Stopped after {pages} pages for {path}."

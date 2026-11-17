@@ -28,3 +28,7 @@ namespace_prefix = "followthrough"
 api_base = "https://api.github.com"
 per_page = 100
 snapshot_dir = "state/snapshots"
+etag_cache = "state/cache/etag.json"   # conditional-request cache (If-None-Match); 304s do not count against the rate limit
+timeout_s = 30
+max_pages = 20              # hard stop on pagination for one list call
+token_env = "GITHUB_TOKEN"  # read from the environment only; never written to disk, logs or prompts

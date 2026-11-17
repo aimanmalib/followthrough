@@ -31,6 +31,10 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "github.api_base",
         "github.per_page",
         "github.snapshot_dir",
+        "github.etag_cache",
+        "github.timeout_s",
+        "github.max_pages",
+        "github.token_env",
     ),
     "models": (
         "provider",
