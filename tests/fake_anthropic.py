@@ -32,10 +32,13 @@ def _has_tool_result(messages: list[dict[str, Any]], name_id: str) -> bool:
 
 class FakeAnthropic:
     def __init__(self, answer: Callable[[int], str], usage: Mapping[str, int] | None = None,
-                 status: int = 200, submit: Callable[[int], str | None] | None = None) -> None:
+                 status: int = 200, submit: Callable[[int], str | None] | None = None,
+                 calls: Mapping[str, Callable[[str], dict[str, Any]]] | None = None) -> None:
         self.answer = answer
         # Arguments for the submit_reading tool call (JSON text), or None to skip that call.
         self.submit = submit or (lambda number: None)
+        # Other tools to call once each when offered: name -> (user text -> tool input).
+        self.calls = dict(calls or {})
         self.usage = dict(usage if usage is not None else {"input_tokens": 1000, "output_tokens": 100})
         self.status = status
         self.requests: list[dict[str, Any]] = []
@@ -80,6 +83,10 @@ class FakeAnthropic:
         elif "submit_reading" in tools and not _has_tool_result(messages, "tu_submit") and self.submit(number):
             content = [{"type": "tool_use", "id": f"tu_submit_{number}", "name": "submit_reading",
                         "input": json.loads(self.submit(number))}]
+            stop = "tool_use"
+        elif todo := [n for n in self.calls if n in tools and not _has_tool_result(messages, f"tu_{n}")]:
+            content = [{"type": "tool_use", "id": f"tu_{todo[0]}_{number}", "name": todo[0],
+                        "input": self.calls[todo[0]](text)}]
             stop = "tool_use"
         else:
             content = [{"type": "text", "text": answer}]

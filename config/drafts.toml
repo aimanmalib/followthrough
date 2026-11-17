@@ -1,0 +1,23 @@
+# Follow-up drafts. A draft is written only for the actions listed here; every other action is digest-only.
+# The drafter sees structured facts only (action, computed dates, the CONTRIBUTING step below), never the
+# thread text, so nothing a third party wrote can steer what the draft says.
+actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "READY_TO_VERIFY"]
+subdir = "drafts"              # drafts go to <sweep.output_dir>/<YYYY-MM-DD>/<subdir>/<number>.md
+date_format = "%Y-%m-%d"       # how computed dates appear in a draft; every one must appear verbatim
+
+# The CONTRIBUTING step each action applies, in our words, with the section it comes from.
+# Written for openminion/openminion's "Issue triage and follow-through" steps; edit for another repo.
+[steps.FOLLOW_UP_DUE]
+source = "CONTRIBUTING, step 3 (Give contributors room)"
+step = "Follow up after seven calendar days without a response, or ask for an update when an agreed ETA slips; state the dates on the issue."
+goal = "Ask the contributor, politely, whether they are still working on this and for a short status update."
+
+[steps.TAKEOVER_ALLOWED]
+source = "CONTRIBUTING, steps 3 to 5 (Give contributors room; Take ownership; Make the handoff visible)"
+step = "Allow three calendar days after a follow-up before taking over; record the handoff with the next action and next update date before overlapping work."
+goal = "Say the follow-up window has passed, that a maintainer may now take over, and keep credit for the contributor's work."
+
+[steps.READY_TO_VERIFY]
+source = "CONTRIBUTING, step 6 (Review and verify)"
+step = "Keep fixed issues open with status:awaiting-release until a verification checklist passes on a published release containing the fix."
+goal = "Say the fix is in the named release and ask for verification against the installed published package before closing."

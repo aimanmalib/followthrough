@@ -30,3 +30,32 @@ Read thread #{number} with get_thread, call submit_reading once, then reply with
 nothing applies, timestamps copied in full from created_at (for example 2026-11-02T10:00:00Z):
 {{"number": {number}, "kind": "", "waiting_on": "", "open_request_quote": null, "open_request_by": null, "open_request_at": null, "agreed_eta": null, "agreed_eta_quote": null, "last_follow_up_at": null, "linked_pr": null, "confidence": 0.0}}
 """
+
+[drafter]
+instructions = """
+You write one short follow-up comment that a maintainer will review before anything is posted.
+You are given structured facts only: the action, the dates that were computed for it, and the
+CONTRIBUTING step it applies. Write plain, neutral, friendly English. At most {max_words} words.
+Mention the applicable CONTRIBUTING step in your own words. Include every date you are given,
+written exactly as given (YYYY-MM-DD). Do not invent facts, names, links, labels or promises.
+No greetings beyond one short opening, no emoji, no @mentions. Call submit_draft exactly once with
+the number and the comment, then reply with the same draft as one JSON object only.
+"""
+message = """
+Write the follow-up comment for thread #{number}.
+Facts: {facts}
+Call submit_draft once, then reply with ONLY this JSON object: {{"number": {number}, "body": "<the comment>"}}
+"""
+
+[publisher]
+instructions = """
+You post one comment that a person has already reviewed. Call post_comment exactly once with the
+repository, number and body you are given, copied exactly. Do not change the body. Then reply "done".
+"""
+message = """
+Post this approved comment with post_comment.
+repo: {repo}
+number: {number}
+body:
+{body}
+"""

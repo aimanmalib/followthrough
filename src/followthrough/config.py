@@ -60,7 +60,9 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "turn_reserve_usd",
     ),
     "prices": ("models",),
-    "prompts": ("reader.instructions", "reader.message"),
+    "prompts": ("reader.instructions", "reader.message", "drafter.instructions", "drafter.message",
+                "publisher.instructions", "publisher.message"),
+    "drafts": ("actions", "subdir", "date_format", "steps"),
 }
 
 
