@@ -27,6 +27,10 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "roles.maintainer_associations",
         "roles.maintainers_extra",
         "guard.quote_max_chars",
+        "sweep.fixture",
+        "sweep.fixture_states",
+        "sweep.output_dir",
+        "digest.list_actions",
         "ledger.expiry_days",
         "ledger.namespace_prefix",
         "github.api_base",
@@ -39,6 +43,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     ),
     "models": (
         "provider",
+        "key_env",
         "agents_json",
         "max_concurrency",
         "profiles.reader.model",

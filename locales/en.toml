@@ -2,7 +2,27 @@
 description = "Follow-Through: who is waiting on whom in your issues and pull requests."
 version = "followthrough {version}"
 lang_help = "Output language (en or ms)."
-not_ready = "This command is not available yet."
+sweep_help = "Read every open thread, apply the follow-up rules and print the digest."
+fixture_help = "Sweep a saved snapshot instead of GitHub (default: the synthetic fixture in config/policy.toml)."
+live_help = "Read the repository from GitHub (GET requests only; token from the environment)."
+repo_help = "Repository to sweep with --live, as owner/name."
+now_help = "Clock for the rules, ISO 8601 with time zone (default: the fixture's own time, or now)."
+reader_help = "Who reads the threads: 'states' (saved readings, offline) or 'model' (one agent per thread)."
+states_help = "Saved readings for --reader states (default: the fixture's hand-written readings)."
+out_help = "Folder for digest files (default: out/); a dated subfolder is created."
+format_help = "What to print: the Markdown digest (md) or the JSON digest (json)."
+repo_required = "--live needs --repo owner/name."
+states_live = "--reader states only works with --fixture; a live sweep is read by the model."
+key_missing = "The model reader needs {env} in the environment."
+written = "Digest written to {folder}"
+
+[digest]
+title = "Follow-Through digest: {repo}"
+as_of = "As of {as_of}, {threads} open threads read."
+partial = "Partial digest: {reason}"
+col_action = "Action"
+col_threads = "Threads"
+guard_note = "Readings rejected by the quote check: {rejected}. Threads that could not be read: {failed}."
 
 [errors]
 config_missing_file = "Config file not found: {path}"
@@ -32,6 +52,7 @@ contributor_waiting = "contributor asked on {asked_on}; reply expected by {reply
 fix_released = "fix shipped in {release_tag} on {released_on}"
 unclear = "could not verify the reading of this thread"
 nothing_pending = "nobody is overdue"
+read_failed = "the thread could not be read"
 
 [budget]
 unpriced_model = "No price for model {model} in config/prices.toml; refusing to run it."

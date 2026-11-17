@@ -88,4 +88,4 @@ def test_unknown_language_is_rejected():
 @pytest.mark.parametrize("lang", config.LANGS)
 def test_cli_prints_localized_text(lang, capsys):
     assert cli.main(["--lang", lang]) == 0
-    assert capsys.readouterr().out.strip() == config.t("cli.not_ready", lang)
+    assert config.t("cli.description", lang) in capsys.readouterr().out

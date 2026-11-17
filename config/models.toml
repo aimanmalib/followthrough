@@ -1,5 +1,6 @@
 # Model profiles. agents.json for OpenMinion is generated from this file.
 provider = "anthropic"
+key_env = "ANTHROPIC_API_KEY"   # model key, read from the environment only
 agents_json = "state/agents.json"
 max_concurrency = 4          # subagents running at once, one per changed thread
 

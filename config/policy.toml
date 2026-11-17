@@ -23,6 +23,15 @@ maintainers_extra = []
 [guard]
 quote_max_chars = 200       # longest quote the reader may return in ThreadState (product requirement 4.6)
 
+[sweep]
+fixture = "fixtures/sandbox-repo.json"          # synthetic snapshot used by `sweep --fixture`
+fixture_states = "fixtures/sandbox-states.json" # hand-written readings: the offline reader for --fixture
+output_dir = "out"                              # digest files go to <output_dir>/<YYYY-MM-DD>/
+
+[digest]
+# Actions listed thread by thread in the digest; every other action is counted only.
+list_actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "READY_TO_VERIFY"]
+
 [ledger]
 expiry_days = 30            # a reminder record older than this no longer suppresses a new draft
 namespace_prefix = "followthrough"

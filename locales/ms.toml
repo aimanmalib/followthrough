@@ -2,7 +2,27 @@
 description = "Follow-Through: siapa menunggu siapa dalam isu dan pull request anda."
 version = "followthrough {version}"
 lang_help = "Bahasa keluaran (en atau ms)."
-not_ready = "Arahan ini belum tersedia."
+sweep_help = "Baca setiap benang terbuka, pakai peraturan susulan dan cetak ringkasan."
+fixture_help = "Sapu snapshot yang disimpan, bukan GitHub (lalai: fixture sintetik dalam config/policy.toml)."
+live_help = "Baca repositori dari GitHub (permintaan GET sahaja; token dari persekitaran)."
+repo_help = "Repositori untuk disapu dengan --live, dalam bentuk pemilik/nama."
+now_help = "Jam untuk peraturan, ISO 8601 dengan zon waktu (lalai: masa fixture itu sendiri, atau sekarang)."
+reader_help = "Siapa membaca benang: 'states' (bacaan tersimpan, luar talian) atau 'model' (satu ejen setiap benang)."
+states_help = "Bacaan tersimpan untuk --reader states (lalai: bacaan tulisan tangan fixture)."
+out_help = "Folder fail ringkasan (lalai: out/); subfolder bertarikh dicipta."
+format_help = "Apa yang dicetak: ringkasan Markdown (md) atau ringkasan JSON (json)."
+repo_required = "--live memerlukan --repo pemilik/nama."
+states_live = "--reader states hanya untuk --fixture; sapuan langsung dibaca oleh model."
+key_missing = "Pembaca model memerlukan {env} dalam persekitaran."
+written = "Ringkasan ditulis ke {folder}"
+
+[digest]
+title = "Ringkasan Follow-Through: {repo}"
+as_of = "Setakat {as_of}, {threads} benang terbuka dibaca."
+partial = "Ringkasan separa: {reason}"
+col_action = "Tindakan"
+col_threads = "Benang"
+guard_note = "Bacaan ditolak oleh semakan petikan: {rejected}. Benang yang tidak dapat dibaca: {failed}."
 
 [errors]
 config_missing_file = "Fail config tiada: {path}"
@@ -32,6 +52,7 @@ contributor_waiting = "penyumbang bertanya pada {asked_on}; jawapan dijangka seb
 fix_released = "pembaikan dikeluarkan dalam {release_tag} pada {released_on}"
 unclear = "bacaan benang ini tidak dapat disahkan"
 nothing_pending = "tiada siapa yang terlewat"
+read_failed = "benang ini tidak dapat dibaca"
 
 [budget]
 unpriced_model = "Tiada harga untuk model {model} dalam config/prices.toml; model itu tidak dijalankan."
