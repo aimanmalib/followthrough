@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# secrets, runtime state, run outputs (third-party issue text is never committed)
+.env
+.env.*
+!.env.example
+/state/
+/out/
+*.db
+*.sqlite
+
+# local working notes, kept outside the public repo
+/dalaman/
+NEXT.md
+CLAUDE.md
+CLAUDE.local.md
+/.claude/
+PELAN-*.md
+PASTE-*.md
+
+# OS / editor
+.DS_Store
+*.log
