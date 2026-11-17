@@ -1,0 +1,269 @@
+{
+ "schema": 1,
+ "repo": "aimanmalib/followthrough-sandbox",
+ "taken_at": "2026-11-20T09:00:00Z",
+ "latest_release": {
+  "tag": "v0.4.2",
+  "published_at": "2026-11-18T12:00:00Z"
+ },
+ "threads": [
+  {
+   "number": 101,
+   "title": "Retry loop ignores max_attempts",
+   "is_pr": false,
+   "labels": [
+    "status:needs-info"
+   ],
+   "author": {
+    "login": "contributor-kai",
+    "association": "CONTRIBUTOR",
+    "maintainer": false
+   },
+   "created_at": "2026-10-28T08:15:00Z",
+   "updated_at": "2026-11-02T10:00:00Z",
+   "body": "With max_attempts = 2 the client still retries five times before giving up.",
+   "comments": [
+    {
+     "id": 9001,
+     "created_at": "2026-11-02T10:00:00Z",
+     "body": "Thanks for the report. Could you add a minimal script that reproduces this with the default config?",
+     "author": {
+      "login": "maintainer-ana",
+      "association": "MEMBER",
+      "maintainer": true
+     }
+    }
+   ],
+   "linked_prs": []
+  },
+  {
+   "number": 102,
+   "title": "Add a --json flag to the status command",
+   "is_pr": false,
+   "labels": [
+    "status:in-progress"
+   ],
+   "author": {
+    "login": "contributor-lee",
+    "association": "NONE",
+    "maintainer": false
+   },
+   "created_at": "2026-10-29T12:00:00Z",
+   "updated_at": "2026-10-31T16:40:00Z",
+   "body": "It would help scripts if status could print JSON.",
+   "comments": [
+    {
+     "id": 9002,
+     "created_at": "2026-10-30T09:30:00Z",
+     "body": "Sounds reasonable. Would you like to take this one?",
+     "author": {
+      "login": "maintainer-raj",
+      "association": "OWNER",
+      "maintainer": true
+     }
+    },
+    {
+     "id": 9003,
+     "created_at": "2026-10-31T14:05:00Z",
+     "body": "Yes, I will open a PR by 2026-11-12.",
+     "author": {
+      "login": "contributor-lee",
+      "association": "NONE",
+      "maintainer": false
+     }
+    },
+    {
+     "id": 9004,
+     "created_at": "2026-10-31T16:40:00Z",
+     "body": "Great, assigned to you.",
+     "author": {
+      "login": "maintainer-raj",
+      "association": "OWNER",
+      "maintainer": true
+     }
+    }
+   ],
+   "linked_prs": []
+  },
+  {
+   "number": 103,
+   "title": "Fix timezone handling in the scheduler",
+   "is_pr": true,
+   "labels": [
+    "status:changes-requested"
+   ],
+   "author": {
+    "login": "contributor-sam",
+    "association": "CONTRIBUTOR",
+    "maintainer": false
+   },
+   "created_at": "2026-10-15T07:00:00Z",
+   "updated_at": "2026-11-10T11:00:00Z",
+   "body": "Schedules created in UTC+8 fire one day late.",
+   "comments": [
+    {
+     "id": 9005,
+     "created_at": "2026-10-20T13:20:00Z",
+     "body": "Please rebase on main and fix the failing scheduler test.",
+     "author": {
+      "login": "maintainer-ana",
+      "association": "MEMBER",
+      "maintainer": true
+     }
+    },
+    {
+     "id": 9006,
+     "created_at": "2026-11-10T11:00:00Z",
+     "body": "Following up on the rebase request above. If there is no reply by 2026-11-13, someone else may take this over.",
+     "author": {
+      "login": "maintainer-ana",
+      "association": "MEMBER",
+      "maintainer": true
+     }
+    }
+   ],
+   "linked_prs": []
+  },
+  {
+   "number": 104,
+   "title": "Cache key for tool results",
+   "is_pr": false,
+   "labels": [
+    "status:needs-maintainer"
+   ],
+   "author": {
+    "login": "contributor-mo",
+    "association": "FIRST_TIME_CONTRIBUTOR",
+    "maintainer": false
+   },
+   "created_at": "2026-11-04T09:00:00Z",
+   "updated_at": "2026-11-06T18:30:00Z",
+   "body": "Tool results are cached per provider only.",
+   "comments": [
+    {
+     "id": 9007,
+     "created_at": "2026-11-05T08:00:00Z",
+     "body": "Good catch. A fix is welcome.",
+     "author": {
+      "login": "maintainer-ana",
+      "association": "MEMBER",
+      "maintainer": true
+     }
+    },
+    {
+     "id": 9008,
+     "created_at": "2026-11-06T18:30:00Z",
+     "body": "Should the cache key include the model name, or is the provider enough? Happy to implement either.",
+     "author": {
+      "login": "contributor-mo",
+      "association": "FIRST_TIME_CONTRIBUTOR",
+      "maintainer": false
+     }
+    }
+   ],
+   "linked_prs": []
+  },
+  {
+   "number": 105,
+   "title": "Streaming stops after the first tool call",
+   "is_pr": false,
+   "labels": [
+    "status:awaiting-release"
+   ],
+   "author": {
+    "login": "contributor-ida",
+    "association": "CONTRIBUTOR",
+    "maintainer": false
+   },
+   "created_at": "2026-10-25T10:00:00Z",
+   "updated_at": "2026-11-08T15:00:00Z",
+   "body": "The stream ends early whenever a tool is called mid-response.",
+   "comments": [
+    {
+     "id": 9009,
+     "created_at": "2026-11-08T15:00:00Z",
+     "body": "Fixed in #110, which is merged. It will ship in the next release.",
+     "author": {
+      "login": "maintainer-raj",
+      "association": "OWNER",
+      "maintainer": true
+     }
+    }
+   ],
+   "linked_prs": [
+    {
+     "number": 110,
+     "merged": true,
+     "merge_commit_sha": "3f2a9c1d0b7e4a6f8c5d2e1b9a0f7c6d5e4b3a21",
+     "in_latest_release": true
+    }
+   ]
+  },
+  {
+   "number": 106,
+   "title": "Docs: example for custom providers",
+   "is_pr": false,
+   "labels": [
+    "status:needs-info"
+   ],
+   "author": {
+    "login": "contributor-noor",
+    "association": "NONE",
+    "maintainer": false
+   },
+   "created_at": "2026-11-17T08:00:00Z",
+   "updated_at": "2026-11-19T07:45:00Z",
+   "body": "The custom provider page has no runnable example.",
+   "comments": [
+    {
+     "id": 9010,
+     "created_at": "2026-11-18T09:00:00Z",
+     "body": "Could you say which provider you are trying to configure?",
+     "author": {
+      "login": "maintainer-ana",
+      "association": "MEMBER",
+      "maintainer": true
+     }
+    },
+    {
+     "id": 9011,
+     "created_at": "2026-11-19T07:45:00Z",
+     "body": "An OpenAI-compatible local server on port 8080.",
+     "author": {
+      "login": "contributor-noor",
+      "association": "NONE",
+      "maintainer": false
+     }
+    }
+   ],
+   "linked_prs": []
+  }
+ ],
+ "fixture": {
+  "synthetic": true,
+  "note": "Synthetic threads written for tests and the sandbox demo. All people and text are invented.",
+  "now": "2026-11-20T09:00:00Z",
+  "expected": {
+   "101": "FOLLOW_UP_DUE",
+   "102": "FOLLOW_UP_DUE",
+   "103": "TAKEOVER_ALLOWED",
+   "104": "MAINTAINER_REPLY_PENDING",
+   "105": "READY_TO_VERIFY",
+   "106": "NO_ACTION"
+  },
+  "expected_reason": {
+   "101": "maintainer request unanswered",
+   "102": "agreed ETA passed",
+   "103": "follow-up unanswered",
+   "104": "contributor question unanswered",
+   "105": "fix merged and released",
+   "106": "contributor replied yesterday"
+  },
+  "fake_quote": {
+   "number": 101,
+   "quote": "Please send the full traceback by Friday.",
+   "at": "2026-11-02T10:00:00Z",
+   "expect": "rejected"
+  }
+ }
+}
