@@ -62,3 +62,43 @@ guard rejects it and the digest counts 1 rejection (thread 101 becomes "No actio
 "unclear"). `tests/test_digest.py` (19 cases) covers these, the Malay output, the absence of any
 thread text in the digest, the partial digest, and live-mode usage errors stopping before any
 network request.
+
+## Drafts (real model)
+
+`scripts/draft_run.py` on 2026-11-17 over the synthetic fixture (saved readings, clock
+2026-11-20T09:00:00Z), drafter `claude-sonnet-5-5` through the OpenMinion `anthropic` provider.
+The fixture has 4 threads whose action needs a draft (2 × FOLLOW_UP_DUE, 1 × TAKEOVER_ALLOWED,
+1 × READY_TO_VERIFY). A draft counts as saved only if it passes the checks (≤ 120 words, every
+computed date verbatim, release tag present, no @mentions).
+
+| Run | Drafter set-up | Saved / drafts | Failures | Words (saved) | USD |
+|---|---|---:|---|---|---:|
+| 1 | reply JSON only (`output_type`) | 1 / 4 | 3 × reply did not validate | 82 | 0.0719 |
+| 2 | same, raw reply kept | 3 / 4 | 1 × runtime blocked the reply as an "unexecutable tool envelope" | 82, 93, 71 | 0.0617 |
+| 3 | + typed `submit_draft` tool | 3 / 4 | 1 × runtime replied "could not safely update the task conditions" (no tool call) | 80, 85, 76 | 0.1116 |
+| 4 | same as run 3 | 4 / 4 | none | 79, 74, 94, 69 | 0.1176 |
+
+All saved drafts passed every check; no draft failed the checks themselves, only the reply step.
+Adding the typed tool raised input tokens from about 3,300 to about 10,000 per draft (tool schemas
+in every request). Total spend for the four runs: USD 0.36; budget ledger total after them: USD 0.71.
+Both failure messages come from the OpenMinion runtime, not from the model's draft; they are
+counted, never saved, and the thread stays in the digest.
+
+## Approval gate (H4, offline)
+
+`tests/test_post.py` runs the publisher on the real OpenMinion runtime against a local fake model
+that calls `post_comment`, with GitHub replaced by a fake `urlopen` that records every request:
+
+| Case | Expected | Result |
+|---|---|---|
+| no approver | paused, 0 model requests, 0 HTTP | pass |
+| approver says `deny` | approver sees the exact body; 0 HTTP | pass |
+| approver says `allow_once` | exactly 1 POST to `/repos/<sandbox>/issues/7/comments` with the approved body | pass |
+| repo not on the allow-list | refused before approver, model and HTTP | pass |
+| default config (allow-list empty) | refused, 0 HTTP | pass |
+| stop file via env or repo-local file | exit code 5 before anything | pass |
+| stop file created while the approval prompt is open | exit code 5 from inside the tool, 0 HTTP | pass |
+| model changes the body after approval | not posted, 0 HTTP | pass |
+
+Sabotage check: removing the allow-list check, the approved-body check or the pause on a missing
+approver turns 4 of these tests red.
