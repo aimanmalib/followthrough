@@ -1,0 +1,35 @@
+name: Bug report
+description: A sweep, a draft, the approval step or the demo doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The command you ran, with its flags (for example `followthrough sweep --fixture --lang en`).
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Follow-Through version (`followthrough --version`)
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options: [sweep --fixture, sweep --live, sweep --draft, post, schedule, doctor, replay, demo/run.sh, digest.html]
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output (remove keys, tokens and any private thread text first)
+      render: text

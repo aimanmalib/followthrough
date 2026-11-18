@@ -1,0 +1,9 @@
+- name: followthrough
+  category: tools
+  owner: "@aimanmalib"
+  collaborators:
+    - "@aimanmalib"
+  status: active
+  created: 2026-11-17
+  version: v0.0.1
+  tags: [python, cli, openminion, github, maintainers, agent]
