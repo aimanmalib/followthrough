@@ -282,3 +282,48 @@ Digest of run 4 (counts only): `FOLLOW_UP_DUE` 3, `READY_TO_VERIFY` 6, `NO_ACTIO
 
 Total spend on these runs and the four 8-thread probes before them: USD 2.381; spend ledger
 total after F9: USD 3.233 of the USD 20.00 limit.
+
+## Label agreement (H2)
+
+`openminion/openminion`, 2026-11-18, openminion 0.1.23, reader `claude-haiku-5-5`, command
+`followthrough agree --set dev|test --snapshot <the run 4 snapshot above>` (ADR 0011). The
+snapshot was taken at 02:45 UTC, so no GitHub request was made. Measured set: open issues with
+exactly one mapped status label, 76 in that snapshot (maintainer-investigation 38,
+contributor-in-progress 19, awaiting-release 17, awaiting-contributor 2). Odd numbers are the dev set
+(35), even numbers the test set (41). **The reader never saw the status labels.** Only counts are
+published; the per-issue list stays in an untracked folder.
+
+| Run | Issues | Read | Agree after guard | Agree as read | Not read (provider error or timeout / invalid reply) | Guard rejected | Host load average | USD |
+|---|---:|---:|---|---|---|---:|---|---:|
+| dev 1 | 35 | 12 | 4 (0.114 of 35; 4 of 12 read) | 6 (0.171; 6 of 12) | 23 (17 / 6) | 4 | 22 to 104 | 0.5707 |
+| test 1 | 41 | 29 | 7 (**0.171** of 41; 7 of 29 read) | 12 (**0.293**; 12 of 29) | 12 (9 / 3) | 9 | 92 falling to 8 | 0.5474 |
+
+**H2 (at least 0.80 on the test set): not met.** 0.171 after the guard and 0.293 as read, counting
+unread issues as disagreements; 0.24 and 0.41 of the issues that were read. Test runs used: 1 of 2.
+
+Test run 1, confusion table, rows = expected from the label, columns = the model's own answer:
+
+| Expected | maintainer | contributor | release | nobody | unclear | not read | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| maintainer | 4 | 8 | 2 | 0 | 1 | 8 | 23 |
+| contributor | 3 | 3 | 0 | 0 | 0 | 2 | 8 |
+| release | 1 | 0 | 5 | 1 | 1 | 2 | 10 |
+
+After the guard the same row totals hold, with the 9 rejected answers moved to `unclear`: maintainer row 1 /
+7 / 2 / 0 / 5 / 8, contributor row 1 / 3 / 0 / 0 / 2 / 2, release row 0 / 0 / 3 / 1 / 4 / 2.
+
+What the numbers say:
+
+- The biggest disagreement: issues labelled `status:maintainer-investigation` read as waiting on
+  the contributor (8 of the 15 such test issues that were read; 4 of 7 in dev). In these threads the newest
+  open request is often a maintainer's question to the reporter, while the label still records an
+  earlier triage decision. Neither side is always right; the label is not updated on every comment.
+- The guard turned 9 of 29 fresh test readings into `unclear`; 8 of them were
+  `follow_up_time_not_found` (the same reader mistake as in the live sweep, H6), so the guarded number is
+  lower than the model's own.
+- Not-read issues: on a host with load average up to 104 on 16 cores, many reader turns ran past the 240 s
+  turn timeout. These count against the agreement here.
+- Not tried: the Sonnet drafter as reader. At USD 2.00 / 10.00 per million tokens (20 times the
+  reader's price) one test run would cost about USD 10, over the USD 1.00 per-run limit.
+- Dev-set tuning (prompt for maintainer-investigation threads and for `last_follow_up_at`) has not
+  been done yet; the second test run is kept for after it.
