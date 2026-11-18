@@ -351,7 +351,8 @@ Replay (`replay --serve`, no key in the environment):
 | `demo/run.sh` from `git archive` (Docker, `--network none`, read-only root) | 83 | 0 | 0 | same digest, then the 2 drafts; 47 s and 49 s with cached base images; image removed afterwards |
 | `demo/run.sh replay --serve -- sweep --fixture --reader model --lang ms` | 54 | 0 | 0 | Malay digest (reader-only run is a subset of the recording) |
 
-A cold build (no cached base images) is measured by the public CI step "Key-free demo".
+Public CI, cold runner (GitHub Actions run 44259212609, commit 42ae252, step "Key-free demo"): image
+built in 18 s, replay finished 32 s after the step started, 83 answered, 0 missed, rc 0.
 
 Misses fail loudly, as designed. Before the normalization rules were complete, the second checkout
 missed 54 of 101 requests and exited 4, each miss with a diff to the closest recording. The diffs
