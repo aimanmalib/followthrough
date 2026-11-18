@@ -19,6 +19,7 @@ from typing import Any
 from followthrough import agents, config
 from followthrough.agents import ReadOutcome, ReadReport
 from followthrough.ledger import ALLOW, Ledger, state_hash
+from followthrough.readings import ReadingCache
 from followthrough.rules import Decision, decide
 from followthrough.spend import Spend
 from followthrough.state import ThreadState, verify
@@ -38,13 +39,32 @@ def read_with_states(snapshot: Mapping[str, Any], states_doc: Mapping[str, Any])
     return ReadReport(outcomes=outcomes, session_id="states")
 
 
-def read_with_model(snapshot: Mapping[str, Any], now: datetime, root: Path) -> ReadReport:
-    """One subagent per thread with the configured reader model; stops at the budget limits."""
+def deadline(started: float, max_minutes: float, turn_timeout_s: float) -> agents.Deadline:
+    """Last moment a reader turn may start so that it ends inside the sweep time limit."""
+    start_by = max(0.0, max_minutes * 60 - turn_timeout_s)
+    return agents.Deadline(at=started + start_by, message=config.t(
+        "budget.time_limit", minutes=round(start_by / 60, 1), limit=max_minutes, turn_s=turn_timeout_s))
+
+
+def read_with_model(snapshot: Mapping[str, Any], now: datetime, root: Path,
+                    cache_cfg: Mapping[str, Any] | None = None, until: agents.Deadline | None = None) -> ReadReport:
+    """One subagent per changed thread with the configured reader model; stops at the budget limits.
+
+    Threads unchanged since their last good reading reuse it from the reading cache (guard re-run)."""
     models = config.load("models")
-    path = agents.write_agents_json(root, models)
-    spend = Spend(root, agents.session_id(snapshot["repo"], now))
-    return agents.read_threads(snapshot, [t["number"] for t in snapshot["threads"]],
-                               config_path=path, spend=spend, now=now, models=models)
+    cache = ReadingCache(root, snapshot["repo"], cache_cfg or config.load("policy")["readings"])
+    to_read, reused = cache.split(snapshot["threads"])
+    sid = agents.session_id(snapshot["repo"], now)
+    report = ReadReport(outcomes=[], session_id=sid)
+    if to_read:
+        path = agents.write_agents_json(root, models)
+        report = agents.read_threads(snapshot, to_read, config_path=path, spend=Spend(root, sid), now=now,
+                                     models=models, deadline=until)
+        cache.update(snapshot["threads"], report.outcomes)
+        cache.save()
+    order = {t["number"]: i for i, t in enumerate(snapshot["threads"])}
+    report.outcomes = sorted([*report.outcomes, *reused], key=lambda o: order[o.number])
+    return report
 
 
 def decide_all(snapshot: Mapping[str, Any], report: ReadReport, now: datetime,

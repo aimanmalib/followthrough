@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -15,7 +16,7 @@ from .config import DEFAULT_LANG, LANGS, ROOT, load, t
 EXIT_OK = 0
 EXIT_USAGE = 2
 EXIT_FAILED = 1  # doctor turn check or scheduling proof did not pass
-EXIT_PARTIAL = 3  # digest written, but the sweep stopped early (budget); the digest says so
+EXIT_PARTIAL = 3  # digest written, but the sweep stopped early (money or time limit); the digest says so
 
 
 def _lang_from_argv(argv: list[str]) -> str:
@@ -81,9 +82,11 @@ def _fail(message: str) -> int:
 
 
 def sweep(args: argparse.Namespace, lang: str) -> int:
-    from . import digest, sweep as sw, telemetry
+    from . import digest, measure, sweep as sw, telemetry
 
     policy, models = load("policy"), load("models")
+    started, started_clock = datetime.now(UTC), time.monotonic()
+    requests: list[tuple[str, str, int]] | None = None
     reader = args.reader or ("model" if args.live else "states")
     extra: dict[str, object] = {}
     if args.live and reader == "states":
@@ -101,8 +104,8 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
         snapshot = client.snapshot(owner, name, now)
         client.write_snapshot(snapshot, now)
         client.save_cache()
-        methods = [m for m, _, _ in client.requests]
-        extra["http"] = {"requests": len(methods), "non_get": sum(1 for m in methods if m != "GET")}
+        requests = list(client.requests)
+        extra["http"] = {"requests": len(requests), "non_get": sum(1 for m, _, _ in requests if m != "GET")}
     else:
         snapshot = sw.load_json(_path(args.fixture or policy["sweep"]["fixture"]))
         fixture = snapshot.get("fixture", {})
@@ -110,7 +113,9 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
     if reader == "states":
         report = sw.read_with_states(snapshot, sw.load_json(_path(args.states or policy["sweep"]["fixture_states"])))
     else:
-        report = sw.read_with_model(snapshot, now, ROOT)
+        until = sw.deadline(started_clock, load("ops")["measure"]["max_minutes"],
+                            float(models["profiles"]["reader"].get("timeout_s") or 0))
+        report = sw.read_with_model(snapshot, now, ROOT, until=until)
         extra["reading"] = report.counts()
     rows = sw.decide_all(snapshot, report, now, policy)
     drafted: list[object] = []
@@ -123,6 +128,11 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
     ops = load("ops")
     telemetry.write(folder, telemetry.build(report.session_id, now, report.outcomes, drafted,
                                             ops["telemetry"]["stat_keys"]), ops["telemetry"]["file"])
+    limits = {"max_minutes": ops["measure"]["max_minutes"], "usd_max_per_sweep": load("budget")["usd_max_per_sweep"]}
+    metrics = measure.build(repo=snapshot["repo"], mode=built["mode"], started=started, finished=datetime.now(UTC),
+                            digest=built, outcomes=report.outcomes, reading=extra.get("reading"),
+                            requests=requests, limits=limits)
+    measure.write(folder, metrics, ops["measure"]["file"], requests, ops["measure"]["http_log"])
     print(json.dumps(built, ensure_ascii=False, indent=1) if args.format == "json" else markdown, end="")
     print(t("cli.written", lang, folder=folder), file=sys.stderr)
     return EXIT_PARTIAL if report.stopped else EXIT_OK

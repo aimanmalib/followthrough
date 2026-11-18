@@ -66,6 +66,7 @@ read_failed = "benang ini tidak dapat dibaca"
 unpriced_model = "Tiada harga untuk model {model} dalam config/prices.toml; model itu tidak dijalankan."
 sweep_limit = "Berhenti: giliran model seterusnya boleh melepasi had setiap sapuan USD {limit} (sudah dibelanja USD {spent})."
 total_limit = "Berhenti: giliran model seterusnya boleh melepasi had keseluruhan USD {limit} (sudah dibelanja USD {spent})."
+time_limit = "Berhenti: tiada giliran model baharu dimulakan selepas minit {minutes} sapuan (had masa {limit} minit, satu giliran boleh mengambil {turn_s} s)."
 
 [reader]
 invalid_output = "jawapan model bukan keadaan benang yang sah"

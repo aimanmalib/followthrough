@@ -28,6 +28,12 @@ fixture = "fixtures/sandbox-repo.json"          # synthetic snapshot used by `sw
 fixture_states = "fixtures/sandbox-states.json" # hand-written readings: the offline reader for --fixture
 output_dir = "out"                              # digest files go to <output_dir>/<YYYY-MM-DD>/
 
+[readings]
+# Reading cache: only threads whose state hash changed since their last reading that passed the quote
+# guard go to the model; the others reuse that reading (guard re-run). Never tracked (state/).
+enabled = true
+cache_dir = "state/readings"
+
 [digest]
 # Actions listed thread by thread in the digest; every other action is counted only.
 list_actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "READY_TO_VERIFY"]

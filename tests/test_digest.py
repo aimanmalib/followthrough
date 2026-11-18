@@ -154,7 +154,7 @@ class _FakeGitHub:
 
 
 def _model_report(stopped=None):
-    def fake(snapshot, now, root):
+    def fake(snapshot, now, root, **kwargs):
         report = sweep.read_with_states(snapshot, STATES)
         report.stopped = stopped
         return report

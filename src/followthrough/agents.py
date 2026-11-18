@@ -9,11 +9,14 @@ the same snapshot. Every turn holds budget first and books its real cost after (
 from __future__ import annotations
 
 import json
+import sqlite3
+import time
 from collections.abc import Callable, Iterable, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from queue import Queue
 from typing import Any
 
 from openminion import Agent, AgentOutputValidationError, APIRuntime, ProviderError, subagent, tool
@@ -60,6 +63,22 @@ def write_agents_json(root: Path, models: Mapping[str, Any] | None = None,
         settings["base_url"] = base_url
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return path
+
+
+def worker_configs(config_path: Path, workers: int) -> list[Path]:
+    """One OpenMinion home per reader worker: worker 0 uses `config_path`, worker i a copy under
+    `workers/w<i>/` with its own SQLite file. Several runtimes on one SQLite file fail with
+    "database is locked" (ADR 0010)."""
+    paths = [config_path]
+    for i in range(1, workers):
+        folder = config_path.parent / "workers" / f"w{i}"
+        folder.mkdir(parents=True, exist_ok=True)
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+        data["storage"]["path"] = str((folder / "openminion.db").resolve())
+        target = folder / config_path.name
+        target.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        paths.append(target)
+    return paths
 
 
 def thread_view(thread: Mapping[str, Any]) -> dict[str, Any]:
@@ -135,7 +154,7 @@ class ReadOutcome:
     cost: TurnCost | None = None
     stats: dict[str, Any] = field(default_factory=dict)
     raw: str = ""  # model reply when it failed validation; may quote the thread, so never published
-    source: str | None = None  # "output_type" (final reply validated) or "submit_reading" (tool arguments)
+    source: str | None = None  # "output_type", "submit_reading" (tool arguments) or "cache"
 
     @property
     def problems(self) -> list[str]:
@@ -168,15 +187,27 @@ class ReadReport:
             "get_thread_calls": len(self.tool_calls),
             "from_output_type": sum(1 for o in self.outcomes if o.source == "output_type"),
             "from_submit_reading": sum(1 for o in self.outcomes if o.source == "submit_reading"),
+            "from_cache": sum(1 for o in self.outcomes if o.source == "cache"),
             "stopped": self.stopped,
         }
 
 
+@dataclass(frozen=True)
+class Deadline:
+    """No new reader turn starts after `at` (time.monotonic()); `message` says why the sweep stopped."""
+
+    at: float
+    message: str
+
+
 def read_threads(snapshot: Mapping[str, Any], numbers: Iterable[int], *, config_path: Path, spend: Spend,
                  now: datetime, models: Mapping[str, Any] | None = None,
-                 prompts: Mapping[str, Any] | None = None, timeout_s: float | None = None) -> ReadReport:
+                 prompts: Mapping[str, Any] | None = None, timeout_s: float | None = None,
+                 deadline: Deadline | None = None) -> ReadReport:
     """Read each thread in `numbers` with its own subagent; at most `max_concurrency` at once."""
     models = models or config.load("models")
+    if timeout_s is None:
+        timeout_s = models["profiles"]["reader"].get("timeout_s")
     prompts = prompts or config.load("prompts")
     policy = config.load("policy")
     model = models["profiles"]["reader"]["model"]
@@ -184,13 +215,29 @@ def read_threads(snapshot: Mapping[str, Any], numbers: Iterable[int], *, config_
     threads = {t["number"]: t for t in snapshot["threads"]}
     sid = session_id(snapshot["repo"], now)
     report = ReadReport(outcomes=[], session_id=sid)
-    # Build the runtime once, up front: subagent() would otherwise create it lazily from several
-    # worker threads at once, and two runtimes migrating one SQLite file fail (ADR 0004).
-    runtime = APIRuntime.from_config_path(str(config_path), logging_mode="interactive")
-    parent: Agent[Any, Any] = Agent(runtime=runtime, name="sweep", agent_id="reader", session_id=sid)
+    # One runtime and one OpenMinion home per worker, built one after another up front (ADR 0004).
+    # Shared by several threads a runtime runs one turn at a time, because a run with decorated tools
+    # holds its tool-registry lock for the whole turn; several runtimes on one SQLite file fail with
+    # "database is locked" (ADR 0010).
+    workers = max(1, int(models["max_concurrency"]))
+    parents: Queue[Agent[Any, Any]] = Queue()
+    runtimes = [APIRuntime.from_config_path(str(path), logging_mode="interactive")
+                for path in worker_configs(config_path, workers)]
+    for runtime in runtimes:
+        parents.put(Agent(runtime=runtime, name="sweep", agent_id="reader", session_id=sid))
 
     def read_one(number: int) -> ReadOutcome:
+        parent = parents.get()
+        try:
+            return read_with(parent, number)
+        finally:
+            parents.put(parent)
+
+    def read_with(parent: Agent[Any, Any], number: int) -> ReadOutcome:
         if report.stopped:
+            return ReadOutcome(number, error="budget_stopped")
+        if deadline is not None and time.monotonic() > deadline.at:
+            report.stopped = deadline.message
             return ReadOutcome(number, error="budget_stopped")
         try:
             held = spend.hold()
@@ -213,7 +260,7 @@ def read_threads(snapshot: Mapping[str, Any], numbers: Iterable[int], *, config_
                 return ReadOutcome(number, error="invalid_output", cost=cost, raw=exc.raw_text)
             return ReadOutcome(number, checked=verify(state, threads[number]), cost=cost,
                                raw=exc.raw_text, source="submit_reading")
-        except (ProviderError, RuntimeError, TimeoutError):
+        except (ProviderError, RuntimeError, TimeoutError, sqlite3.Error):
             return ReadOutcome(number, error="provider_error", cost=spend.forfeit(held, model))
         chars_in = len(instructions) + len(message) + len(json.dumps(thread_view(threads[number])))
         cost = spend.settle(held, model, result.stats, chars_in, len(result.text))
@@ -222,10 +269,11 @@ def read_threads(snapshot: Mapping[str, Any], numbers: Iterable[int], *, config_
 
     try:
         wanted = [n for n in numbers if n in threads]
-        with ThreadPoolExecutor(max_workers=max(1, int(models["max_concurrency"]))) as pool:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
             report.outcomes = list(pool.map(read_one, wanted))
     finally:
-        runtime.close()
+        for runtime in runtimes:
+            runtime.close()
     return report
 
 

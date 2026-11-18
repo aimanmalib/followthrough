@@ -30,3 +30,9 @@ poll_max = 36                # 3 minutes for the one proof run to leave the queu
 pending_states = ["queued", "leased", "running"]
 # Printed for the maintainer's own crontab; Follow-Through does not install it.
 cron_line = "{minute} {hour} * * * cd {repo_dir} && uv run followthrough sweep --live --repo {repo} --draft >> out/cron.log 2>&1"
+
+[measure]
+# Written next to digest.json for every sweep (counts only; publishable for a third-party repo).
+file = "metrics.json"
+http_log = "http-log.json"   # method, API path, status per GitHub request; stays in out/
+max_minutes = 20             # live sweep time limit (H1): no reader turn starts after max_minutes minus the reader timeout_s; USD limit = budget.toml

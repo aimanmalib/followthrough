@@ -2,10 +2,11 @@
 provider = "anthropic"
 key_env = "ANTHROPIC_API_KEY"   # model key, read from the environment only
 agents_json = "state/agents.json"
-max_concurrency = 4          # subagents running at once, one per changed thread
+max_concurrency = 4          # subagents running at once, one per changed thread, each on its own runtime (ADR 0010)
 
 [profiles.reader]
 model = "claude-haiku-5-5"   # reads one thread, returns ThreadState
+timeout_s = 240              # one reader turn; OpenMinion's own default (90 s) is too short on a busy host
 
 [profiles.drafter]
 model = "claude-sonnet-5-5"  # writes one follow-up draft

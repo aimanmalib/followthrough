@@ -66,6 +66,7 @@ read_failed = "the thread could not be read"
 unpriced_model = "No price for model {model} in config/prices.toml; refusing to run it."
 sweep_limit = "Stopped: the next model turn could pass the per-sweep limit of USD {limit} (spent USD {spent})."
 total_limit = "Stopped: the next model turn could pass the total limit of USD {limit} (spent USD {spent})."
+time_limit = "Stopped: no new model turn starts after minute {minutes} of a sweep (time limit {limit} minutes, one turn may take {turn_s} s)."
 
 [reader]
 invalid_output = "the model reply was not a valid thread state"
