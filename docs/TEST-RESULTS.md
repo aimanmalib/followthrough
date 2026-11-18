@@ -95,7 +95,9 @@ that calls `post_comment`, with GitHub replaced by a fake `urlopen` that records
 | approver says `deny` | approver sees the exact body; 0 HTTP | pass |
 | approver says `allow_once` | exactly 1 POST to `/repos/<sandbox>/issues/7/comments` with the approved body | pass |
 | repo not on the allow-list | refused before approver, model and HTTP | pass |
-| default config (allow-list empty) | refused, 0 HTTP | pass |
+| empty allow-list | refused, 0 HTTP | pass |
+| shipped config (allow-list = the sandbox only) on `openminion/openminion` | refused before approver, model and HTTP | pass |
+| publisher message (config) parses as an explicit `post_comment` request | yes (regression for the live finding below) | pass |
 | stop file via env or repo-local file | exit code 5 before anything | pass |
 | stop file created while the approval prompt is open | exit code 5 from inside the tool, 0 HTTP | pass |
 | model changes the body after approval | not posted, 0 HTTP | pass |
@@ -190,3 +192,44 @@ Offline (`tests/test_telemetry.py`, 4 tests): totals per kind, tokens and USD; f
 replaced by `other`; no thread text or model reply appears in the file; saved readings are not turns;
 a fixture sweep writes `telemetry.json` next to `digest.json`. Sabotage check: keeping free-text
 problems turns 2 tests red.
+
+## Sandbox approval demo
+
+Live, 2026-11-18 (01:07 to 01:20 UTC), on the project's own private sandbox repository
+`aimanmalib/followthrough-sandbox`, with `claude-haiku-5-5` and `config/safety.toml`
+`allow_post_repos = ["aimanmalib/followthrough-sandbox"]`.
+
+1. `scripts/seed_sandbox.py` wrote fixture thread #101 (invented text: a contributor's report and a
+   maintainer's request for a reproduction script). The first version looked for an existing issue
+   through GitHub search, which had not indexed the new issue 10 s later, so a second run created a
+   duplicate: sandbox issues #1 and #2 are the same thread. Fixed (plain listing, regression test);
+   a third run reused #2 and posted nothing. Both issues were then used: one approved, one denied.
+2. `followthrough sweep --live --repo aimanmalib/followthrough-sandbox --now 2026-11-26T09:00:00Z --draft`.
+   GitHub stamps seeded posts with the seeding time, so the rules' clock is moved 8 days forward.
+   Result: 2 threads read by the model, 2 x `FOLLOW_UP_DUE` ("maintainer request unanswered since
+   2026-11-18"), 0 quote-guard rejections, 4 HTTP requests, 0 non-GET; 2 drafts saved
+   (91 and 79 words, dates 2026-11-26 and take-over from 2026-11-29, no mentions). Reading cost
+   USD 0.013 (18 model calls).
+3. `followthrough post` on each draft:
+
+| Step | Exit code | Comments on the issue (before -> after) | Write requests |
+|---|---:|---|---:|
+| stop file present (`PERANAN_HENTI`), answer `allow_once` | 5 | #1: 1 -> 1 | 0 |
+| answer `deny` on #2 | 0 | #2: 1 -> 1 | 0 |
+| answer `allow_once` on #1 | 0 | #1: 1 -> 2 | 1 |
+
+The posted comment (`https://github.com/aimanmalib/followthrough-sandbox/issues/1#issuecomment-6966060777`)
+is byte-identical to the saved draft (`diff` empty, trailing whitespace ignored).
+
+Failure found on the way: the first `deny` and `allow_once` runs both ended `not_posted` with 0 tool
+calls. The approver was never asked, so that first `deny` proved nothing and is not counted above.
+OpenMinion's freshness classifier read the dated comment as a question about current facts, and the
+runtime answered it itself ("Missing exact-date evidence for an exact-date freshness answer").
+OpenMinion skips that classifier for explicit tool requests, so the publisher message now starts with
+"Call post_comment" (config, ADR 0009). After the change the approver received the exact draft body.
+
+Known limits of this demo: every seeded post comes from one account (the sandbox owner), so the
+author roles are carried in the text and the reader still classified both threads correctly; the
+clock is moved with `--now` rather than waiting 8 days. Total project spend after the demo: USD 0.85
+of 20.00.
+
