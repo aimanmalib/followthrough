@@ -9,6 +9,7 @@ the same snapshot. Every turn holds budget first and books its real cost after (
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import time
 from collections.abc import Callable, Iterable, Mapping
@@ -44,9 +45,11 @@ def write_agents_json(root: Path, models: Mapping[str, Any] | None = None,
                       base_url: str | None = None) -> Path:
     """Generate the OpenMinion config (agents.json) from config/models.toml.
 
-    `base_url` points the provider somewhere else (tests and replay use a local server).
+    `base_url` points the provider somewhere else (tests use a local server). Without it, the variable named
+    by config/replay.toml `base_url_env` is used when set: that is how `followthrough replay` reroutes a run.
     """
     models = models or config.load("models")
+    base_url = base_url or os.environ.get(config.load("replay")["base_url_env"]) or None
     provider = models["provider"]
     cfg = OpenMinionConfig()
     cfg.agents = {name: AgentProfileConfig(name=name, provider=provider, default_channel="console")

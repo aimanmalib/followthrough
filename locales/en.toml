@@ -29,6 +29,13 @@ agree_repo_help = "Use the newest saved snapshot of this repository, as owner/na
 snapshot_help = "A saved snapshot file to measure (default: the newest one for --repo)."
 agree_source = "agree needs --snapshot PATH or --repo owner/name."
 
+replay_help = "Run one followthrough command against a local model endpoint: --record saves real answers, --serve replays them without a key."
+record_help = "Forward model requests to the real API and save each exchange (needs the model key)."
+serve_help = "Answer model requests only from saved exchanges; a request never recorded fails the run."
+port_help = "Port on 127.0.0.1 (default: a free one)."
+replay_dir_help = "Folder of saved exchanges (default: config/replay.toml dir)."
+replay_run_help = "The followthrough command to run, after --, e.g. -- sweep --fixture --reader model --draft."
+
 [digest]
 title = "Follow-Through digest: {repo}"
 as_of = "As of {as_of}, {threads} open threads read."
@@ -102,3 +109,9 @@ no_snapshot = "No saved snapshot found; run a live sweep first or pass --snapsho
 empty = "No issue in the {set} set has exactly one mapped status label."
 run_limit = "The test set has already been read {limit} times; no more test runs."
 result = "H2 {set} run {run}: {n} issues, agree {guarded} after the guard, {as_read} as read, {failed} not read, USD {usd}"
+
+[replay]
+listening = "replay {mode}: model endpoint at {url}"
+no_command = "Give the command to run after --, e.g. -- sweep --fixture --reader model."
+summary = "replay: {served} answered from recordings, {recorded} recorded, {missed} missed"
+miss = "replay miss {key} on {path}; closest saved request, diff:"

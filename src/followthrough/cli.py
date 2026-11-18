@@ -67,6 +67,14 @@ def build_parser(lang: str) -> argparse.ArgumentParser:
     post.add_argument("--repo", metavar="OWNER/NAME", required=True, help=t("cli.post_repo_help", lang))
     post.add_argument("--number", type=int, required=True, help=t("cli.post_number_help", lang))
     post.add_argument("--draft", metavar="PATH", required=True, help=t("cli.post_draft_help", lang))
+    replay = sub.add_parser("replay", help=t("cli.replay_help", lang), description=t("cli.replay_help", lang))
+    replay.add_argument("--lang", choices=LANGS, default=argparse.SUPPRESS, help=t("cli.lang_help", lang))
+    mode = replay.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--record", action="store_true", help=t("cli.record_help", lang))
+    mode.add_argument("--serve", action="store_true", help=t("cli.serve_help", lang))
+    replay.add_argument("--port", type=int, help=t("cli.port_help", lang))
+    replay.add_argument("--dir", metavar="DIR", help=t("cli.replay_dir_help", lang))
+    replay.add_argument("run", nargs=argparse.REMAINDER, help=t("cli.replay_run_help", lang))
     return parser
 
 
@@ -218,6 +226,11 @@ def main(argv: list[str] | None = None) -> int:
         return schedule_cmd(args, lang)
     if args.command == "agree":
         return agree(args, lang)
+    if args.command == "replay":
+        from . import replay
+
+        command = args.run[1:] if args.run[:1] == ["--"] else args.run
+        return replay.run(replay.RECORD if args.record else replay.SERVE, command, ROOT, lang, args.port, args.dir)
     if args.command == "post":
         if args.repo.count("/") != 1:
             return _fail(t("cli.repo_required", lang))

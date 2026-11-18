@@ -15,7 +15,7 @@ SANDBOX_REPO = "aimanmalib/followthrough-sandbox"
 
 def test_every_config_file_loads_with_required_keys():
     data = config.load_all()
-    assert set(data) == {"policy", "models", "safety", "budget", "prices", "prompts", "drafts", "ops"}
+    assert set(data) == {"policy", "models", "safety", "budget", "prices", "prompts", "drafts", "ops", "replay"}
 
 
 @pytest.mark.parametrize("key", ["follow_up_days", "after_follow_up_days", "maintainer_reply_days"])
@@ -89,3 +89,10 @@ def test_unknown_language_is_rejected():
 def test_cli_prints_localized_text(lang, capsys):
     assert cli.main(["--lang", lang]) == 0
     assert config.t("cli.description", lang) in capsys.readouterr().out
+
+
+def test_replay_binds_loopback_and_records_inside_fixtures():
+    replay = config.load("replay")
+    assert replay["host"] == "127.0.0.1"
+    assert replay["dir"].startswith("fixtures/")
+    assert all(len(pair) == 2 for pair in replay["normalize"])

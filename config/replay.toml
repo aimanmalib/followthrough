@@ -1,0 +1,27 @@
+# Record/replay of the model API (product requirement 4.9): key-free, repeatable demo runs.
+# `followthrough replay --record -- <followthrough args>` proxies to the real API and saves each exchange;
+# `followthrough replay --serve -- <followthrough args>` answers from the saved exchanges only.
+# A request with no saved answer is a hard failure with a diff to the closest saved request.
+
+dir = "fixtures/recorded"                 # recorded exchanges, synthetic fixture only (never live repos)
+upstream = "https://api.anthropic.com"    # where --record forwards requests
+host = "127.0.0.1"                        # the server only ever binds to loopback
+port = 0                                  # 0 = a free port picked at start
+base_url_env = "FOLLOWTHROUGH_MODEL_BASE_URL"  # the sweep sends model requests here when this is set
+placeholder_key = "replay-offline-no-key" # --serve sets the model key variable to this when it is empty
+miss_status = 400                         # not retried by the client; the run fails after it ends
+diff_lines = 60                           # longest diff printed for a miss
+diff_width = 240                          # a changed line longer than this is shown around its first change
+upstream_timeout_s = 300
+# Request headers forwarded upstream in --record. Nothing from the request headers is ever saved.
+forward_headers = ["x-api-key", "authorization", "anthropic-version", "anthropic-beta", "content-type", "accept"]
+# Top-level request keys left out of the match (values that change from run to run without changing meaning).
+drop_keys = ["metadata"]
+
+# Applied in order to the canonical request text before hashing: [pattern, replacement].
+normalize = [
+  ['[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', '<uuid>'],
+  ['\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?', '<ts>'],
+  ['sweep:[^"\s]+:\d{8}', 'sweep:<session>'],
+  ['\b[0-9a-f]{32}(?:[0-9a-f]{32})?\b', '<hex-id>'],  # OpenMinion turn ids (32) and capture ids (64), new every run
+]

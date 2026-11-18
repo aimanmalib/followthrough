@@ -29,6 +29,13 @@ agree_repo_help = "Guna snapshot tersimpan terbaharu repositori ini, sebagai pem
 snapshot_help = "Fail snapshot tersimpan untuk diukur (lalai: yang terbaharu untuk --repo)."
 agree_source = "agree perlukan --snapshot LALUAN atau --repo pemilik/nama."
 
+replay_help = "Jalankan satu arahan followthrough terhadap titik akhir model tempatan: --record menyimpan jawapan sebenar, --serve memainkannya semula tanpa kunci."
+record_help = "Hantar permintaan model ke API sebenar dan simpan setiap pertukaran (perlukan kunci model)."
+serve_help = "Jawab permintaan model hanya dari pertukaran yang disimpan; permintaan yang tidak pernah dirakam menggagalkan larian."
+port_help = "Port pada 127.0.0.1 (lalai: port yang bebas)."
+replay_dir_help = "Folder pertukaran yang disimpan (lalai: dir dalam config/replay.toml)."
+replay_run_help = "Arahan followthrough yang dijalankan, selepas --, cth -- sweep --fixture --reader model --draft."
+
 [digest]
 title = "Ringkasan Follow-Through: {repo}"
 as_of = "Setakat {as_of}, {threads} benang terbuka dibaca."
@@ -102,3 +109,9 @@ no_snapshot = "Tiada snapshot tersimpan; jalankan sapuan langsung dahulu atau be
 empty = "Tiada isu dalam set {set} yang mempunyai tepat satu label status yang dipetakan."
 run_limit = "Set ujian sudah dibaca {limit} kali; tiada lagi larian ujian."
 result = "H2 {set} larian {run}: {n} isu, setuju {guarded} selepas pengawal, {as_read} seperti dibaca, {failed} tidak dibaca, USD {usd}"
+
+[replay]
+listening = "replay {mode}: titik akhir model di {url}"
+no_command = "Berikan arahan yang dijalankan selepas --, cth -- sweep --fixture --reader model."
+summary = "replay: {served} dijawab dari rakaman, {recorded} dirakam, {missed} terlepas"
+miss = "replay terlepas {key} pada {path}; permintaan tersimpan paling hampir, beza:"
