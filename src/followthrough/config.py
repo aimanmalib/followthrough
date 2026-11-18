@@ -31,6 +31,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "sweep.fixture_states",
         "sweep.output_dir",
         "digest.list_actions",
+        "ledger.path",
         "ledger.expiry_days",
         "ledger.namespace_prefix",
         "github.api_base",

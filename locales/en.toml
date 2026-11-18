@@ -8,6 +8,7 @@ live_help = "Read the repository from GitHub (GET requests only; token from the 
 repo_help = "Repository to sweep with --live, as owner/name."
 now_help = "Clock for the rules, ISO 8601 with time zone (default: the fixture's own time, or now)."
 reader_help = "Who reads the threads: 'states' (saved readings, offline) or 'model' (one agent per thread)."
+draft_help = "Also draft follow-ups (model), skipping threads the reminder ledger has already covered."
 states_help = "Saved readings for --reader states (default: the fixture's hand-written readings)."
 out_help = "Folder for digest files (default: out/); a dated subfolder is created."
 format_help = "What to print: the Markdown digest (md) or the JSON digest (json)."

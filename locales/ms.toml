@@ -8,6 +8,7 @@ live_help = "Baca repositori dari GitHub (permintaan GET sahaja; token dari pers
 repo_help = "Repositori untuk disapu dengan --live, dalam bentuk pemilik/nama."
 now_help = "Jam untuk peraturan, ISO 8601 dengan zon waktu (lalai: masa fixture itu sendiri, atau sekarang)."
 reader_help = "Siapa membaca benang: 'states' (bacaan tersimpan, luar talian) atau 'model' (satu ejen setiap benang)."
+draft_help = "Juga draf susulan (model), melangkau benang yang sudah dicatat dalam lejar peringatan."
 states_help = "Bacaan tersimpan untuk --reader states (lalai: bacaan tulisan tangan fixture)."
 out_help = "Folder fail ringkasan (lalai: out/); subfolder bertarikh dicipta."
 format_help = "Apa yang dicetak: ringkasan Markdown (md) atau ringkasan JSON (json)."

@@ -42,6 +42,7 @@ def build_parser(lang: str) -> argparse.ArgumentParser:
     sweep.add_argument("--reader", choices=("states", "model"), help=t("cli.reader_help", lang))
     sweep.add_argument("--states", metavar="PATH", help=t("cli.states_help", lang))
     sweep.add_argument("--out", metavar="DIR", help=t("cli.out_help", lang))
+    sweep.add_argument("--draft", action="store_true", help=t("cli.draft_help", lang))
     sweep.add_argument("--format", choices=("md", "json"), default="md", help=t("cli.format_help", lang))
     return parser
 
@@ -72,7 +73,7 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
     extra: dict[str, object] = {}
     if args.live and reader == "states":
         return _fail(t("cli.states_live", lang))
-    if reader == "model" and not os.environ.get(models["key_env"]):
+    if (reader == "model" or args.draft) and not os.environ.get(models["key_env"]):
         return _fail(t("cli.key_missing", lang, env=models["key_env"]))
     if args.live:
         if not args.repo or args.repo.count("/") != 1:
@@ -97,6 +98,8 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
         report = sw.read_with_model(snapshot, now, ROOT)
         extra["reading"] = report.counts()
     rows = sw.decide_all(snapshot, report, now, policy)
+    if args.draft:
+        extra["drafts"] = sw.run_drafts(snapshot, rows, now, ROOT, policy, models)
     built = digest.build(snapshot["repo"], now, "live" if args.live else "fixture", reader, rows,
                          stopped=report.stopped, extra=extra)
     markdown = digest.render_md(built, lang, policy["digest"]["list_actions"])

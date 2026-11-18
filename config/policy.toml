@@ -33,6 +33,9 @@ output_dir = "out"                              # digest files go to <output_dir
 list_actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "READY_TO_VERIFY"]
 
 [ledger]
+# One row per thread: state hash + last action + when it was drafted. A new draft only when the hash or
+# the action changed, or the row is older than expiry_days. SQLite, not OpenMinion memory (ADR 0007).
+path = "state/ledger.db"
 expiry_days = 30            # a reminder record older than this no longer suppresses a new draft
 namespace_prefix = "followthrough"
 
