@@ -19,6 +19,19 @@ reminder twice. It never posts to a repo that is not on its allow-list.
 - One write path (`post_comment`): stop file first, then allow-list, then human approval.
 - Output in English or Malay (`--lang en|ms`).
 
+## Daily schedule
+
+Follow-Through does not install a scheduler. `followthrough schedule --daily 06:30 --repo owner/name`
+proves an OpenMinion cron task in a throw-away home (one run, then paused and deleted, no daemon left)
+and prints a line for your own crontab:
+
+```
+30 6 * * * cd /path/to/followthrough && uv run followthrough sweep --live --repo owner/name --draft >> out/cron.log 2>&1
+```
+
+`followthrough doctor` checks the OpenMinion setup. Each sweep writes per-turn telemetry
+(`out/<date>/telemetry.json`: tokens, cost, run stats; no thread text).
+
 ## Development
 
 ```sh

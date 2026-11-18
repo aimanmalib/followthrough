@@ -128,3 +128,65 @@ labels from the state hash each turns at least one of these tests red (6, 1, 1 a
 OpenMinion memory, measured for ADR 0007 (`tests/test_memory_gap.py`, 6 tests pass on 0.1.23):
 `list` returns records past `expires_at` (also with `valid_at` / `as_of`); `search` by a full key
 also returns another key; a namespace with `/` is rejected; upsert by key keeps one live record.
+
+## Scheduling
+
+`followthrough schedule --daily 06:30 --repo openminion/openminion`, run on the build host on
+2026-11-18 (openminion 0.1.23, `echo` provider in a throw-away home, no model key):
+
+| Step | Result |
+|---|---|
+| `cron create --cron "30 6 * * *" --tz UTC` | ok, `next_due_at` 2026-11-18T06:30:00+00:00 |
+| `daemon start` (own free port) | started; pid file in the throw-away home |
+| `cron run` | queued, then `finished` (started 00:31:47.649, finished 00:31:48.762 UTC: 1.1 s) |
+| run summary | the task instruction, echoed by the `echo` provider |
+| delivery | `failed` / `cron_delivery_failed` (no delivery target; recorded, not a proof failure) |
+| `cron pause` | `enabled: false`, `next_due_at: null` |
+| `daemon stop` | rc 0; daemon process alive afterwards: no |
+| throw-away home | deleted |
+| proof passed | yes; whole command 80 s wall time |
+
+Afterwards on the host: 0 OpenMinion daemons from Follow-Through homes, 0 leftover temporary homes,
+0 crontab lines mentioning Follow-Through. The 0.1.23 CLI has no `cron list` or `cron delete`; the
+task lived only in the deleted home. The printed system cron line:
+
+```
+30 6 * * * cd <repo folder> && uv run followthrough sweep --live --repo openminion/openminion --draft >> out/cron.log 2>&1
+```
+
+Two manual probes before this command existed: (1) without a daemon, `cron run` returned `ok` with
+state `queued` and the run never executed (pausing the task cancelled it); (2) with the default port,
+`daemon start` failed on this host because another OpenMinion daemon already listened on 18789
+("endpoint identity does not match"). Hence the daemon for the proof and the per-home port.
+
+Offline (`tests/test_schedule.py`, 19 tests, fake `openminion` runner): the command order create →
+daemon start → run → show → pause → daemon stop; a failed create starts no daemon; a run that never
+leaves `queued` fails the proof and still pauses and stops; a daemon process that survives `stop` is
+killed (real child process); model and GitHub tokens are not in the child environment and a secret
+printed by the child is redacted; the throw-away home uses its own port and the `echo` provider and is
+gone afterwards. Sabotage check: removing the kill, the token stripping, the redaction or the per-home
+port turns 1, 2, 1 and 1 tests red.
+
+## Diagnostics and telemetry
+
+`followthrough doctor` on the build host (model key loaded, 27 s, nothing spent):
+
+| Check | Status | ok / warn / fail |
+|---|---|---|
+| `openminion doctor --json`, project config (`anthropic`) | ok | 23 / 3 / 0 |
+| `openminion doctor --check-turn --json`, `echo` provider | ok | 23 / 3 / 0 |
+
+The 3 warnings in both: no identity profile for the agent, the untrusted-content boundary posture,
+and the security summary that counts it. The saved `doctor.json` does not contain the model key
+(checked by searching the file for the key value). Without the key, the project-config check fails on
+`provider.anthropic.key` and `runtime.bootstrap`, as expected.
+
+`telemetry.json` from one fixture sweep with the model reader (`sweep --fixture --reader model`,
+claude-haiku-5-5, 2026-11-18): 6 reader turns, 3 accepted readings, 224,017 input and 17,495 output
+tokens, 1 turn with estimated tokens, USD 0.05115. A turn record carries the OpenMinion run stats, for
+example `llm_calls` 7, `tool_calls` 2, `duration_ms` 11,933. Total model spend so far: USD 0.77 of 20.00.
+
+Offline (`tests/test_telemetry.py`, 4 tests): totals per kind, tokens and USD; free-text problems are
+replaced by `other`; no thread text or model reply appears in the file; saved readings are not turns;
+a fixture sweep writes `telemetry.json` next to `digest.json`. Sabotage check: keeping free-text
+problems turns 2 tests red.
