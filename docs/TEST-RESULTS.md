@@ -364,3 +364,31 @@ Finding: `claude-sonnet-5-5` rejects the forced `tool_choice` (`{"type": "tool"}
 freshness classifier with HTTP 400 ("tool_choice: type tool and any are not supported for this model").
 The runtime records `classifier_failed` and carries on, so drafts are still written. The recorder saves
 such repeatable 4xx replies (not 408, 409, 429 or 5xx) so the replay takes the same path.
+
+## Digest page (R4)
+
+`digest.html` (ADR 0013), 2026-11-18, host Playwright, `scripts/check_page.py`. Pages checked: the
+offline fixture sweep in English and in Malay (`sweep --fixture --lang en|ms`), and an English page built
+from the same digest with a budget stop banner and live-style metrics (412 GitHub requests, 0 writes).
+
+| Engine and view | Width | Schemes | Pages | Passed |
+|---|---:|---|---:|---:|
+| Chromium | 320 px | light, dark | 3 | 6/6 |
+| Chromium | 1280 px | light, dark | 3 | 6/6 |
+| WebKit, iPhone 13 device | 390 px | light, dark | 3 | 6/6 |
+| WebKit, mobile | 320 px | light, dark | 3 | 6/6 |
+
+24/24 passed: `scrollWidth <= clientWidth`, no element past the right edge, no console errors, every
+text element at WCAG AA contrast or better (4.5:1, or 3:1 for large text). Screenshots at device scale 3.
+
+The first render showed three layout faults that the checks do not measure: the repository name broke
+inside a word at 390 px, a wrapped Malay section heading pushed its count to the far right at 320 px,
+and the five action cards left one card alone on a row on desktop. All three were fixed (break after
+`owner/`, inline count, one row of cards from 40 rem and a full-width last card on two columns) and the
+24 checks were run again.
+
+Sabotage: the English page with the soft text colour set to `#c9c3b5` and a 400 px minimum width failed
+7 of 8 checks (18 low-contrast elements in each light view, `scrollWidth` 400 at 320 and 390 px); the
+dark desktop view passed, as expected, because neither change touches it. `tests/test_page.py`: 10 tests
+(language, counts, self-contained, no thread text, escaping, partial banner, colour tokens, CLI); removing
+the escape of the repository name turns the escaping test red.
