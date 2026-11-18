@@ -16,6 +16,9 @@ repo_required = "--live needs --repo owner/name."
 states_live = "--reader states only works with --fixture; a live sweep is read by the model."
 key_missing = "The model reader needs {env} in the environment."
 written = "Digest written to {folder}"
+doctor_help = "Check the OpenMinion setup: the project config, then one turn with the key-free echo provider."
+schedule_help = "Prove a daily OpenMinion schedule (create, one run, pause, delete) and print the system cron line."
+daily_help = "Time of the daily sweep, 24-hour UTC, as HH:MM."
 
 [digest]
 title = "Follow-Through digest: {repo}"
@@ -63,3 +66,11 @@ total_limit = "Stopped: the next model turn could pass the total limit of USD {l
 [reader]
 invalid_output = "the model reply was not a valid thread state"
 provider_error = "the model provider failed"
+
+[ops]
+doctor_project_config = "Project config: {status} (provider {provider}; ok {ok}, warn {warn}, fail {fail})"
+doctor_turn_check = "Turn check, echo provider: {status} (ok {ok}, warn {warn}, fail {fail})"
+saved = "Saved {path}"
+bad_daily = "--daily needs a 24-hour UTC time as HH:MM (got {value})."
+schedule_result = "Scheduling proof: cron \"{cron}\" ({tz}), proof run {state}, passed: {ok}"
+cron_line = "For a daily sweep, add this line to your own crontab (Follow-Through does not install it):"

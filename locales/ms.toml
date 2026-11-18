@@ -16,6 +16,9 @@ repo_required = "--live memerlukan --repo pemilik/nama."
 states_live = "--reader states hanya untuk --fixture; sapuan langsung dibaca oleh model."
 key_missing = "Pembaca model memerlukan {env} dalam persekitaran."
 written = "Ringkasan ditulis ke {folder}"
+doctor_help = "Semak persediaan OpenMinion: konfigurasi projek, kemudian satu giliran dengan penyedia echo tanpa kunci."
+schedule_help = "Buktikan jadual harian OpenMinion (cipta, satu larian, jeda, padam) dan cetak baris cron sistem."
+daily_help = "Masa sapuan harian, UTC 24 jam, dalam bentuk HH:MM."
 
 [digest]
 title = "Ringkasan Follow-Through: {repo}"
@@ -63,3 +66,11 @@ total_limit = "Berhenti: giliran model seterusnya boleh melepasi had keseluruhan
 [reader]
 invalid_output = "jawapan model bukan keadaan benang yang sah"
 provider_error = "penyedia model gagal"
+
+[ops]
+doctor_project_config = "Konfigurasi projek: {status} (penyedia {provider}; ok {ok}, amaran {warn}, gagal {fail})"
+doctor_turn_check = "Semakan giliran, penyedia echo: {status} (ok {ok}, amaran {warn}, gagal {fail})"
+saved = "Disimpan {path}"
+bad_daily = "--daily perlukan masa UTC 24 jam dalam bentuk HH:MM (diberi {value})."
+schedule_result = "Bukti penjadualan: cron \"{cron}\" ({tz}), larian bukti {state}, lulus: {ok}"
+cron_line = "Untuk sapuan harian, tambah baris ini ke crontab anda sendiri (Follow-Through tidak memasangnya):"
