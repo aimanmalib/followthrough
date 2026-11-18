@@ -215,7 +215,7 @@ At run time the agent sends thread text to an Anthropic model through OpenMinion
 again to write a draft. The model's answer is never trusted on its own: dates must be backed by quotes that exist in the
 thread, the actions come from rules, and a person approves every comment.
 
-### AI disclosure
+## AI disclosure
 
 This project is an entry to Cortensor Hackathon #5. The code and documentation are written with Claude Code (Anthropic),
 directed and reviewed by the author. The narration in the demo video uses an ElevenLabs clone of the author's own voice.
