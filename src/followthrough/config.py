@@ -67,7 +67,9 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "ops": ("telemetry.file", "telemetry.stat_keys", "isolated.provider", "isolated.profile", "isolated.host",
             "isolated.command_timeout_s", "isolated.strip_env", "doctor.file", "doctor.message",
             "schedule.file", "schedule.task_name", "schedule.instruction", "schedule.tz",
-            "schedule.poll_every_s", "schedule.poll_max", "schedule.pending_states", "schedule.cron_line"),
+            "schedule.poll_every_s", "schedule.poll_max", "schedule.pending_states", "schedule.cron_line",
+            "agreement.dev_parity", "agreement.max_test_runs", "agreement.max_minutes", "agreement.runs_log",
+            "agreement.file", "agreement.private_dir"),
 }
 
 

@@ -23,6 +23,11 @@ post_help = "Show one saved draft, ask allow_once or deny on standard input, and
 post_repo_help = "Repository of the thread, as owner/name (must be in config/safety.toml allow_post_repos)."
 post_number_help = "Issue or pull request number."
 post_draft_help = "The saved draft file (out/<date>/drafts/<number>.md); its text is posted exactly."
+agree_help = "Label agreement (H2): read the dev or test set with status labels hidden and compare with the labels."
+set_help = "dev (odd issue numbers, tuning allowed) or test (even numbers, read at most twice)."
+agree_repo_help = "Use the newest saved snapshot of this repository, as owner/name."
+snapshot_help = "A saved snapshot file to measure (default: the newest one for --repo)."
+agree_source = "agree needs --snapshot PATH or --repo owner/name."
 
 [digest]
 title = "Follow-Through digest: {repo}"
@@ -91,3 +96,9 @@ status_refused_repo = "{repo} is not in allow_post_repos: nothing posted ({posts
 status_paused = "No approver: paused, nothing posted on {repo}#{number}."
 status_not_posted = "Not posted on {repo}#{number} ({posts} write requests)."
 status_error = "The post step failed; nothing confirmed on {repo}#{number} ({posts} write requests)."
+
+[agree]
+no_snapshot = "No saved snapshot found; run a live sweep first or pass --snapshot."
+empty = "No issue in the {set} set has exactly one mapped status label."
+run_limit = "The test set has already been read {limit} times; no more test runs."
+result = "H2 {set} run {run}: {n} issues, agree {guarded} after the guard, {as_read} as read, {failed} not read, USD {usd}"

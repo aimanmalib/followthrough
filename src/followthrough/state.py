@@ -59,6 +59,7 @@ class Checked:
 
     state: ThreadState
     problems: list[str] = field(default_factory=list)
+    read_as: WaitingOn | None = None  # the model's own waiting_on, kept when the guard turned it "unclear"
 
     @property
     def rejected(self) -> bool:
@@ -141,12 +142,12 @@ def _check_linked_pr(state: ThreadState, thread: Mapping[str, Any], all_posts: l
 def verify(state: ThreadState, thread: Mapping[str, Any]) -> Checked:
     """Check every quote and timestamp in `state` against `thread` (one snapshot thread)."""
     if state.number != thread["number"]:
-        return Checked(state.model_copy(update={"waiting_on": "unclear"}), ["number_mismatch"])
+        return Checked(state.model_copy(update={"waiting_on": "unclear"}), ["number_mismatch"], state.waiting_on)
     all_posts = posts(thread)
     problems = (_check_request(state, all_posts) + _check_eta(state, all_posts)
                 + _check_follow_up(state, all_posts) + _check_linked_pr(state, thread, all_posts))
     if problems:
-        return Checked(state.model_copy(update={"waiting_on": "unclear"}), problems)
+        return Checked(state.model_copy(update={"waiting_on": "unclear"}), problems, state.waiting_on)
     return Checked(state)
 
 

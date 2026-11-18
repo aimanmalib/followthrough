@@ -11,8 +11,12 @@ awaiting_release = "status:awaiting-release"   # READY_TO_VERIFY candidate label
 status_prefix = "status:"                      # labels used for label-agreement measurement
 
 # Map of status label -> expected waiting_on (maintainer | contributor | release | nobody | unclear).
-# Filled in when the label-agreement measurement is set up; empty means "not measured".
+# Used only by the label-agreement measurement (`followthrough agree`); labels not listed are not measured.
 [labels.waiting_on]
+"status:maintainer-investigation" = "maintainer"
+"status:contributor-in-progress" = "contributor"
+"status:awaiting-contributor" = "contributor"
+"status:awaiting-release" = "release"
 
 [roles]
 # GitHub author_association values that count as maintainer.

@@ -23,6 +23,11 @@ post_help = "Papar satu draf tersimpan, minta allow_once atau deny dari input pi
 post_repo_help = "Repositori benang itu, dalam bentuk pemilik/nama (mesti ada dalam allow_post_repos config/safety.toml)."
 post_number_help = "Nombor isu atau pull request."
 post_draft_help = "Fail draf tersimpan (out/<tarikh>/drafts/<nombor>.md); teksnya dikepos tepat."
+agree_help = "Persetujuan label (H2): baca set dev atau ujian dengan label status disembunyikan dan banding dengan label."
+set_help = "dev (nombor isu ganjil, penalaan dibenarkan) atau test (nombor genap, dibaca paling banyak dua kali)."
+agree_repo_help = "Guna snapshot tersimpan terbaharu repositori ini, sebagai pemilik/nama."
+snapshot_help = "Fail snapshot tersimpan untuk diukur (lalai: yang terbaharu untuk --repo)."
+agree_source = "agree perlukan --snapshot LALUAN atau --repo pemilik/nama."
 
 [digest]
 title = "Ringkasan Follow-Through: {repo}"
@@ -91,3 +96,9 @@ status_refused_repo = "{repo} tiada dalam allow_post_repos: tiada apa dikepos ({
 status_paused = "Tiada pelulus: dijeda, tiada apa dikepos pada {repo}#{number}."
 status_not_posted = "Tidak dikepos pada {repo}#{number} ({posts} permintaan tulis)."
 status_error = "Langkah kepos gagal; tiada yang disahkan pada {repo}#{number} ({posts} permintaan tulis)."
+
+[agree]
+no_snapshot = "Tiada snapshot tersimpan; jalankan sapuan langsung dahulu atau beri --snapshot."
+empty = "Tiada isu dalam set {set} yang mempunyai tepat satu label status yang dipetakan."
+run_limit = "Set ujian sudah dibaca {limit} kali; tiada lagi larian ujian."
+result = "H2 {set} larian {run}: {n} isu, setuju {guarded} selepas pengawal, {as_read} seperti dibaca, {failed} tidak dibaca, USD {usd}"

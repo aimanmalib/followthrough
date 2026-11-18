@@ -55,6 +55,13 @@ def build_parser(lang: str) -> argparse.ArgumentParser:
     schedule.add_argument("--daily", metavar="HH:MM", required=True, help=t("cli.daily_help", lang))
     schedule.add_argument("--repo", metavar="OWNER/NAME", default="OWNER/NAME", help=t("cli.repo_help", lang))
     schedule.add_argument("--out", metavar="DIR", help=t("cli.out_help", lang))
+    agree = sub.add_parser("agree", help=t("cli.agree_help", lang), description=t("cli.agree_help", lang))
+    agree.add_argument("--lang", choices=LANGS, default=argparse.SUPPRESS, help=t("cli.lang_help", lang))
+    agree.add_argument("--set", choices=("dev", "test"), required=True, help=t("cli.set_help", lang))
+    agree.add_argument("--repo", metavar="OWNER/NAME", help=t("cli.agree_repo_help", lang))
+    agree.add_argument("--snapshot", metavar="PATH", help=t("cli.snapshot_help", lang))
+    agree.add_argument("--now", metavar="ISO", help=t("cli.now_help", lang))
+    agree.add_argument("--out", metavar="DIR", help=t("cli.out_help", lang))
     post = sub.add_parser("post", help=t("cli.post_help", lang), description=t("cli.post_help", lang))
     post.add_argument("--lang", choices=LANGS, default=argparse.SUPPRESS, help=t("cli.lang_help", lang))
     post.add_argument("--repo", metavar="OWNER/NAME", required=True, help=t("cli.post_repo_help", lang))
@@ -178,6 +185,24 @@ def schedule_cmd(args: argparse.Namespace, lang: str) -> int:
     return EXIT_OK if report["ok"] else EXIT_FAILED
 
 
+def agree(args: argparse.Namespace, lang: str) -> int:
+    from . import agreement
+
+    policy, models = load("policy"), load("models")
+    if not os.environ.get(models["key_env"]):
+        return _fail(t("cli.key_missing", lang, env=models["key_env"]))
+    if args.snapshot:
+        path: Path | None = _path(args.snapshot)
+    elif args.repo and args.repo.count("/") == 1:
+        path = agreement.newest_snapshot(ROOT, policy["github"]["snapshot_dir"], args.repo)
+    else:
+        return _fail(t("cli.agree_source", lang))
+    if path is None or not path.is_file():
+        return _fail(t("agree.no_snapshot", lang))
+    return agreement.run(which=args.set, snapshot_path=path, now=_now(args.now, None) if args.now else None,
+                         out_dir=_path(args.out or policy["sweep"]["output_dir"]), root=ROOT, lang=lang)
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     lang = _lang_from_argv(argv)
@@ -191,6 +216,8 @@ def main(argv: list[str] | None = None) -> int:
         return doctor(args, lang)
     if args.command == "schedule":
         return schedule_cmd(args, lang)
+    if args.command == "agree":
+        return agree(args, lang)
     if args.command == "post":
         if args.repo.count("/") != 1:
             return _fail(t("cli.repo_required", lang))

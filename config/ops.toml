@@ -36,3 +36,13 @@ cron_line = "{minute} {hour} * * * cd {repo_dir} && uv run followthrough sweep -
 file = "metrics.json"
 http_log = "http-log.json"   # method, API path, status per GitHub request; stays in out/
 max_minutes = 20             # live sweep time limit (H1): no reader turn starts after max_minutes minus the reader timeout_s; USD limit = budget.toml
+
+[agreement]
+# Label agreement (H2): open issues with exactly one mapped status label (policy.toml [labels.waiting_on]).
+# The reader never sees status labels in this run, so it cannot copy the answer from them.
+dev_parity = "odd"           # odd issue numbers = dev set (prompt tuning allowed); even = test set
+max_test_runs = 2            # the test set is read at most this many times, counted before each run starts
+max_minutes = 30             # no reader turn starts after max_minutes minus the reader timeout_s
+runs_log = "state/h2-runs.json"
+file = "agreement-{set}.json"  # counts only, written to out/<YYYY-MM-DD>/
+private_dir = "dalaman/h2"     # per-issue list (numbers + our one-line verdict); never tracked
