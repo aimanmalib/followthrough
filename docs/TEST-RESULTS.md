@@ -454,3 +454,17 @@ Transcription of the final audio (ElevenLabs Scribe, English) against the script
 325 transcribed, match ratio 0.937. Every difference is a spoken form ("31" heard as "thirty one",
 "subagent" as "sub agent", "#5" as "number five") or a filler word the narration adds ("and", "it").
 The video is not published yet.
+
+## Release
+
+`v1.0.0`, tag on commit 06bcab0, published 2026-11-18 11:35 UTC (notes: `RELEASE.md`).
+
+| Check | Result |
+|---|---|
+| Public CI on the tagged commit (GitHub Actions run 44295146190) | success: 287 passed, offline; key-free demo step 83 answered, 0 missed |
+| `git archive v1.0.0` into an empty folder, then `demo/run.sh` on the build host | rc 0 in 71 s (image build included, host load average about 30); 83 answered from recordings, 0 missed; digest, then 2 drafts; last digest line "Readings rejected by the quote check: 2. Threads that could not be read: 1."; no demo image left afterwards |
+| `followthrough --version` | `followthrough 1.0.0` |
+
+The demo guide `demo/README.md` budgets about 3 minutes for steps 1 to 3 (run, digest, drafts) and about 2 minutes
+for step 4 (approval on your own repository), which is not part of the offline demo; the measured approval run is
+in "Sandbox approval demo" above.
