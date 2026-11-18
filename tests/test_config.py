@@ -15,7 +15,7 @@ SANDBOX_REPO = "aimanmalib/followthrough-sandbox"
 
 def test_every_config_file_loads_with_required_keys():
     data = config.load_all()
-    assert set(data) == {"policy", "models", "safety", "budget", "prices", "prompts", "drafts"}
+    assert set(data) == {"policy", "models", "safety", "budget", "prices", "prompts", "drafts", "ops"}
 
 
 @pytest.mark.parametrize("key", ["follow_up_days", "after_follow_up_days", "maintainer_reply_days"])

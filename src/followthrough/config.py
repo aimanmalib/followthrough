@@ -64,6 +64,10 @@ REQUIRED: dict[str, tuple[str, ...]] = {
     "prompts": ("reader.instructions", "reader.message", "drafter.instructions", "drafter.message",
                 "publisher.instructions", "publisher.message"),
     "drafts": ("actions", "subdir", "date_format", "steps"),
+    "ops": ("telemetry.file", "telemetry.stat_keys", "isolated.provider", "isolated.profile", "isolated.host",
+            "isolated.command_timeout_s", "isolated.strip_env", "doctor.file", "doctor.message",
+            "schedule.file", "schedule.task_name", "schedule.instruction", "schedule.tz",
+            "schedule.poll_every_s", "schedule.poll_max", "schedule.pending_states", "schedule.cron_line"),
 }
 
 

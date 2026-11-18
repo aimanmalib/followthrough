@@ -111,8 +111,10 @@ def draft_new(snapshot: Mapping[str, Any], rows: Iterable[tuple[ReadOutcome, Dec
 
 
 def run_drafts(snapshot: Mapping[str, Any], rows: list[tuple[ReadOutcome, Decision | None]], now: datetime,
-               root: Path, policy: Mapping[str, Any], models: Mapping[str, Any]) -> dict[str, Any]:
-    """The `sweep --draft` step: drafter subagents for what the ledger allows; counts for the digest."""
+               root: Path, policy: Mapping[str, Any], models: Mapping[str, Any]) -> tuple[dict[str, Any], list[Any]]:
+    """The `sweep --draft` step: drafter subagents for what the ledger allows.
+
+    Returns the counts for the digest and the outcomes (for telemetry)."""
     from followthrough import drafter
 
     drafts = config.load("drafts")
@@ -125,8 +127,8 @@ def run_drafts(snapshot: Mapping[str, Any], rows: list[tuple[ReadOutcome, Decisi
 
     with Ledger.from_policy(root, policy) as ledger:
         plan, outcomes = draft_new(snapshot, rows, ledger, now, drafts["actions"], draft)
-    return {"ledger": plan.counts(), "saved": sum(1 for o in outcomes if o.path is not None),
-            "not_saved": sum(1 for o in outcomes if o.path is None)}
+    return ({"ledger": plan.counts(), "saved": sum(1 for o in outcomes if o.path is not None),
+             "not_saved": sum(1 for o in outcomes if o.path is None)}, outcomes)
 
 
 def load_json(path: Path) -> dict[str, Any]:

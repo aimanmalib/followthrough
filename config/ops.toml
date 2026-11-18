@@ -1,0 +1,32 @@
+# Diagnostics, telemetry and the scheduling proof (product requirement 4.8).
+# Doctor's turn check and the scheduling proof run in a throw-away OpenMinion home that uses the key-free
+# "echo" provider: no model key, no spend, and the home (task, daemon, database) is deleted afterwards.
+# Production scheduling is the system cron line below; Follow-Through never installs it.
+
+[telemetry]
+file = "telemetry.json"      # written next to digest.json in out/<YYYY-MM-DD>/
+# Numeric OpenMinion run stats copied into each turn record when present (text is never copied).
+stat_keys = ["llm_calls", "tool_calls", "input_tokens", "output_tokens", "duration_ms"]
+
+[isolated]
+provider = "echo"            # OpenMinion's built-in local provider: replies with the input, no network
+profile = "scheduler"
+host = "127.0.0.1"           # the proof daemon binds here; the port is picked free at run time
+command_timeout_s = 180      # one `openminion ...` call
+# Environment variables removed before calling openminion (the proof needs none of them).
+strip_env = ["ANTHROPIC_API_KEY", "HF_TOKEN", "GITHUB_TOKEN", "GH_TOKEN"]
+
+[doctor]
+file = "doctor.json"
+message = "doctor ping"      # turn-check input; the echo provider sends nothing anywhere
+
+[schedule]
+file = "schedule.json"
+task_name = "followthrough-daily-sweep"
+instruction = "Follow-Through daily sweep (scheduling proof)"
+tz = "UTC"
+poll_every_s = 5
+poll_max = 36                # 3 minutes for the one proof run to leave the queue
+pending_states = ["queued", "leased", "running"]
+# Printed for the maintainer's own crontab; Follow-Through does not install it.
+cron_line = "{minute} {hour} * * * cd {repo_dir} && uv run followthrough sweep --live --repo {repo} --draft >> out/cron.log 2>&1"
