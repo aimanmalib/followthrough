@@ -13,6 +13,10 @@ miss_status = 400                         # not retried by the client; the run f
 diff_lines = 60                           # longest diff printed for a miss
 diff_width = 240                          # a changed line longer than this is shown around its first change
 upstream_timeout_s = 300
+# Upstream error replies that ARE saved: request rejections that happen every time for the same request
+# (e.g. a model refusing a forced tool_choice) are part of the run. Momentary ones are never saved.
+save_errors_below = 500                   # 4xx are saved ...
+never_save = [408, 409, 429]              # ... except timeouts, conflicts and rate limits
 # Request headers forwarded upstream in --record. Nothing from the request headers is ever saved.
 forward_headers = ["x-api-key", "authorization", "anthropic-version", "anthropic-beta", "content-type", "accept"]
 # Top-level request keys left out of the match (values that change from run to run without changing meaning).
@@ -23,5 +27,10 @@ normalize = [
   ['[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', '<uuid>'],
   ['\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?', '<ts>'],
   ['sweep:[^"\s]+:\d{8}', 'sweep:<session>'],
+  ['Active state: (?:[^\\]|\\[^n])*', 'Active state: <runtime-state>'],  # OpenMinion's own bookkeeping line
+  ['mem_[0-9a-f]{12}', 'mem_<id>'],  # memory record ids
+  ['((?:time|duration|elapsed|latency)\w*\\?"?:\s*)\d+(?:\.\d+)?', '\1<n>'],  # wall-clock budgets in the state block
+  ['(## Runtime Grounding\\n)(?:(?!\\n\.\.\.\[truncated\]).)*(?=\\n\.\.\.\[truncated\])', '\1<grounding>'],  # cut at a fixed length, so it shifts with the folder name
+  ['((?:cwd|workspace_root): )[^\\"]*', '\1<path>'],  # OpenMinion tells the drafter its folders: differ per checkout
   ['\b[0-9a-f]{32}(?:[0-9a-f]{32})?\b', '<hex-id>'],  # OpenMinion turn ids (32) and capture ids (64), new every run
 ]

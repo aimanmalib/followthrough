@@ -327,3 +327,39 @@ What the numbers say:
   reader's price) one test run would cost about USD 10, over the USD 1.00 per-run limit.
 - Dev-set tuning (prompt for maintainer-investigation threads and for `last_follow_up_at`) has not
   been done yet; the second test run is kept for after it.
+
+## Key-free demo (record and replay, H5)
+
+`followthrough replay` (ADR 0012), synthetic fixture only, OpenMinion 0.1.23, 2026-11-18.
+
+Recording (`replay --record -- sweep --fixture --reader model --draft`, reader `claude-haiku-5-5`,
+drafter `claude-sonnet-5-5`, clean checkout, rc 0, 251.8 s):
+
+- 83 model exchanges recorded in 67 files (1.2 MB); 8 of the files are HTTP 400 replies (see below).
+- Cost of this recording: USD 0.1317 (spend ledger; reader 0.0537). An earlier recording made before
+  4xx replies were saved cost USD 0.1515 and was replaced. Project total after both: USD 4.63 of 20.00.
+- What the model produced, as recorded: follow-up due 2, take-over allowed 1, no action 3; the quote
+  check rejected 2 readings (`follow_up_time_not_found`), 1 thread could not be read (`invalid_output`);
+  3 drafts allowed by the ledger, 2 saved, 1 not saved (`invalid_output`). These are the model's real
+  answers on the fixture, not the hand-written ones; the replay reproduces them, faults included.
+
+Replay (`replay --serve`, no key in the environment):
+
+| Run | Exchanges answered | Missed | rc | Output |
+|---|---:|---:|---:|---|
+| Second clean checkout on the host, same command | 83 | 0 | 0 | digest and both drafts byte-identical to the recording |
+| `demo/run.sh` from `git archive` (Docker, `--network none`, read-only root) | 83 | 0 | 0 | same digest, then the 2 drafts; 47 s and 49 s with cached base images; image removed afterwards |
+| `demo/run.sh replay --serve -- sweep --fixture --reader model --lang ms` | 54 | 0 | 0 | Malay digest (reader-only run is a subset of the recording) |
+
+A cold build (no cached base images) is measured by the public CI step "Key-free demo".
+
+Misses fail loudly, as designed. Before the normalization rules were complete, the second checkout
+missed 54 of 101 requests and exited 4, each miss with a diff to the closest recording. The diffs
+showed what OpenMinion puts into prompts on its own and changes per run or per checkout: turn and
+capture ids, remaining time budget and memory record ids (the "Active state" line), the working folder,
+and the "Runtime Grounding" section cut at a fixed length (a different folder name moves the cut).
+
+Finding: `claude-sonnet-5-5` rejects the forced `tool_choice` (`{"type": "tool"}`) of OpenMinion's
+freshness classifier with HTTP 400 ("tool_choice: type tool and any are not supported for this model").
+The runtime records `classifier_failed` and carries on, so drafts are still written. The recorder saves
+such repeatable 4xx replies (not 408, 409, 429 or 5xx) so the replay takes the same path.

@@ -71,7 +71,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
             "agreement.dev_parity", "agreement.max_test_runs", "agreement.max_minutes", "agreement.runs_log",
             "agreement.file", "agreement.private_dir"),
     "replay": ("dir", "upstream", "host", "port", "base_url_env", "placeholder_key", "miss_status", "diff_lines", "diff_width",
-               "upstream_timeout_s", "forward_headers", "drop_keys", "normalize"),
+               "upstream_timeout_s", "save_errors_below", "never_save", "forward_headers", "drop_keys", "normalize"),
 }
 
 

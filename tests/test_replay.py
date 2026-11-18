@@ -62,14 +62,20 @@ def test_record_saves_the_answer_but_no_request_header(tmp_path):
     assert len(fake.requests) == 1
 
 
-def test_upstream_errors_are_passed_back_but_never_saved(tmp_path):
-    fake = FakeAnthropic(lambda n: "x", status=529)
+@pytest.mark.parametrize("status,saved", [(400, True), (429, False), (529, False), (500, False)])
+def test_only_repeatable_upstream_rejections_are_saved(tmp_path, status, saved):
+    fake = FakeAnthropic(lambda n: "x", status=status)
     try:
         with ReplayServer(RECORD, Store(tmp_path), _upstream_cfg(fake)) as server:
-            status, _, _ = _post(server.base_url, {"model": "m", "messages": []})
+            got, _, _ = _post(server.base_url, {"model": "m", "messages": []})
     finally:
         fake.close()
-    assert status == 529 and not list(tmp_path.glob("*.json")) and server.tally.recorded == 0
+    assert got == status
+    assert (len(list(tmp_path.glob("*.json"))) == 1) is saved and server.tally.recorded == int(saved)
+    if saved:
+        with ReplayServer(SERVE, Store(tmp_path), CFG) as server:
+            assert _post(server.base_url, {"model": "m", "messages": []})[0] == status
+        assert server.tally.served == 1 and not server.tally.misses
 
 
 def test_serve_returns_the_saved_body_byte_for_byte_including_sse(tmp_path):
@@ -128,3 +134,22 @@ def test_run_without_a_command_or_key_is_a_usage_error(tmp_path, monkeypatch):
 @pytest.mark.parametrize("lang", ["en", "ms"])
 def test_replay_strings_exist_in_both_languages(lang):
     assert "{missed}" in config.strings(lang)["replay.summary"]
+
+
+def test_tracked_recordings_hold_no_key_or_local_path_and_match_the_current_rules():
+    """Every recording is keyed by today's normalization (a rule change needs a re-record or re-key)."""
+    files = sorted((ROOT / CFG["dir"]).glob("*.json"))
+    assert files
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for needle in ("x-api-key", "sk-ant-", "Bearer ", "/home/", "/tmp/"):
+            assert needle not in text, (path.name, needle)
+        record = json.loads(text)
+        renormalized = canonical(json.dumps(json.loads(record["request"])).encode(), CFG)
+        assert request_key(record["path"], renormalized) == path.stem
+
+
+def test_a_long_changed_line_is_shown_around_its_change_not_its_start():
+    head = "x" * 500
+    shown = replay._clip(f"-{head}OLD-tail", f"+{head}NEW-tail", 80)
+    assert "OLD" in shown and shown.startswith("-...")

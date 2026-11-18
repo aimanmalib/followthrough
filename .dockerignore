@@ -1,0 +1,18 @@
+# The demo image gets the code, config, locales and synthetic fixtures only.
+.git
+.github
+.venv
+.pytest_cache
+**/__pycache__
+state/
+out/
+dalaman/
+.env
+.env.*
+*.db
+NEXT.md
+CLAUDE.md
+CLAUDE.local.md
+PELAN-*.md
+PASTE-*.md
+.openminion/

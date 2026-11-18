@@ -94,7 +94,8 @@ def _clip(line: str, other: str, width: int) -> str:
     """A long changed line, shown from just before its first difference with the paired line."""
     if len(line) <= width:
         return line
-    start = next((i for i, (a, b) in enumerate(zip(line, other)) if a != b), min(len(line), len(other)))
+    # Index 0 is the diff marker ("-" or "+"), which always differs; the change is searched after it.
+    start = next((i for i, (a, b) in enumerate(zip(line, other)) if i and a != b), min(len(line), len(other)))
     start = max(1, start - width // 4)
     return f"{line[0]}...{line[start:start + width]}..."
 
@@ -199,8 +200,11 @@ class ReplayServer:
             with urllib.request.urlopen(request, timeout=float(self.cfg["upstream_timeout_s"])) as reply:
                 status, content_type, data = reply.status, reply.headers.get("content-type", ""), reply.read()
         except urllib.error.HTTPError as err:
-            # Errors are passed back but never saved: a replay must not reproduce a bad moment upstream.
-            return err.code, err.headers.get("content-type", "application/json"), err.read()
+            status, content_type, data = err.code, err.headers.get("content-type", "application/json"), err.read()
+            # A rejection of this exact request is part of the run (the client handles it the same way on
+            # replay); a momentary failure (rate limit, timeout, 5xx) must never be replayed.
+            if status >= int(self.cfg["save_errors_below"]) or status in set(self.cfg["never_save"]):
+                return status, content_type, data
         with self._lock:
             self.store.put(key, path, text, status, content_type, data.decode("utf-8"))
             self.tally.recorded += 1

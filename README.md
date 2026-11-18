@@ -19,6 +19,19 @@ reminder twice. It never posts to a repo that is not on its allow-list.
 - One write path (`post_comment`): stop file first, then allow-list, then human approval.
 - Output in English or Malay (`--lang en|ms`).
 
+## Try it without a key
+
+```sh
+demo/run.sh
+```
+
+Needs Docker only. It builds a small image, runs the sweep of the synthetic sample repository with the
+real agent pipeline (one reader subagent per thread, the quote check, the rules, the drafter) and prints
+the digest and the saved drafts. Every model answer is replayed from `fixtures/recorded/`, recorded once
+from the real API with `followthrough replay --record`; the container has no network and no key. A request
+that was never recorded fails the run with a diff instead of falling back to the API. Results:
+[`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md), "Key-free demo".
+
 ## Daily schedule
 
 Follow-Through does not install a scheduler. `followthrough schedule --daily 06:30 --repo owner/name`
