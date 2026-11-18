@@ -5,6 +5,7 @@
 
 dir = "fixtures/recorded"                 # recorded exchanges, synthetic fixture only (never live repos)
 upstream = "https://api.anthropic.com"    # where --record forwards requests
+forbidden_upstream_hosts = ["github.com", "githubusercontent.com"]  # never a write path to GitHub (post.py is the only one)
 host = "127.0.0.1"                        # the server only ever binds to loopback
 port = 0                                  # 0 = a free port picked at start
 base_url_env = "FOLLOWTHROUGH_MODEL_BASE_URL"  # the sweep sends model requests here when this is set

@@ -18,6 +18,7 @@ import json
 import re
 import threading
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
@@ -126,6 +127,10 @@ class ReplayServer:
     def __init__(self, mode: str, store: Store, cfg: Mapping[str, Any], api_key: str | None = None) -> None:
         if mode not in (RECORD, SERVE):
             raise ValueError(mode)
+        host = urllib.parse.urlsplit(str(cfg["upstream"])).hostname or ""
+        if any(host == h or host.endswith("." + h) for h in cfg["forbidden_upstream_hosts"]):
+            # The only write path to GitHub is post.py; the recorder must never become a second one.
+            raise ValueError(f"replay upstream {host} is not a model API")
         self.mode, self.store, self.cfg, self.api_key = mode, store, cfg, api_key
         self.tally = Tally()
         self._lock = threading.Lock()
@@ -194,8 +199,8 @@ class ReplayServer:
         out = {k: v for k, v in headers.items() if k.lower() in wanted}
         if self.api_key:
             out["x-api-key"] = self.api_key
-        request = urllib.request.Request(self.cfg["upstream"].rstrip("/") + path, data=body, headers=out,
-                                         method="POST")
+        # A request with a body is sent as the model API call it is; the recorder talks to `upstream` only.
+        request = urllib.request.Request(self.cfg["upstream"].rstrip("/") + path, data=body, headers=out)
         try:
             with urllib.request.urlopen(request, timeout=float(self.cfg["upstream_timeout_s"])) as reply:
                 status, content_type, data = reply.status, reply.headers.get("content-type", ""), reply.read()

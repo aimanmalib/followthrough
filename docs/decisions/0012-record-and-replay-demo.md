@@ -34,6 +34,11 @@ answers that were really given by the model once.
   remaining time budget, memory record ids), the working folder (`cwd`, `workspace_root`) and the
   "Runtime Grounding" section, which the runtime cuts at a fixed length, so a longer or shorter folder
   name changes what survives the cut.
+- The recorder forwards to the model API (`upstream`), the same call OpenMinion makes in every sweep;
+  it is not a write path to GitHub. It refuses a GitHub upstream (`forbidden_upstream_hosts`) at start,
+  so `post.py` stays the only code that can write to a repository. The request method is the one implied
+  by a body (urllib), so the project's static check for explicit write methods outside `post.py` still
+  holds for `src/`.
 - `--serve` answers from the files only. A request without a recording gets an error reply
   (`miss_status`; OpenMinion's structured calls retry it, and every retry misses again), the closest saved
   request is diffed to standard error with long prompt lines shown around the change, and the run exits 4

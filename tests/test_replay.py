@@ -153,3 +153,9 @@ def test_a_long_changed_line_is_shown_around_its_change_not_its_start():
     head = "x" * 500
     shown = replay._clip(f"-{head}OLD-tail", f"+{head}NEW-tail", 80)
     assert "OLD" in shown and shown.startswith("-...")
+
+
+@pytest.mark.parametrize("upstream", ["https://api.github.com", "https://uploads.github.com", "https://github.com"])
+def test_the_recorder_refuses_a_github_upstream(tmp_path, upstream):
+    with pytest.raises(ValueError):
+        ReplayServer(RECORD, Store(tmp_path), {**CFG, "upstream": upstream})
