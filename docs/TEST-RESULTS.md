@@ -2,6 +2,21 @@
 
 Measured numbers only. Failures are reported as they happened.
 
+## Upstream activity
+
+Read-only GitHub searches on `openminion/openminion`, 2026-11-18 10:01 UTC (`gh api search/issues`, `total_count`
+only; no thread text kept). These are the counts quoted in the README.
+
+| Query | Count |
+|---|---:|
+| issues created 2026-10-18 to 2026-11-17 (31 days) | 188 |
+| pull requests created 2026-10-18 to 2026-11-17 | 318 |
+| open issues and pull requests | 107 |
+| open issues labelled `status:awaiting-release` | 18 |
+
+GitHub search counts move as items are deleted or transferred; a nearby window (2026-10-16 to 2026-11-16) gave 186
+issues and 322 pull requests.
+
 ## Fixture run (real model)
 
 Synthetic fixture `fixtures/sandbox-repo.json` (6 invented threads, one per follow-up action, plus a
@@ -36,6 +51,9 @@ and the token counts OpenMinion reports.
   (USD 0.015552); the fifth raised before reporting.
 
 ## Offline tests
+
+Public CI, GitHub Actions run 44279632622 (2026-11-18, commit 564e987): `uv run --frozen pytest -q` reported
+**282 passed** in 46.9 s, with no key and no network.
 
 `tests/test_agents.py` runs the same code against a local fake of the Anthropic Messages API
 (127.0.0.1, no key): every fixture thread read by its own subagent with one `get_thread` call each,
