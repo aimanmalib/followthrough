@@ -102,3 +102,29 @@ that calls `post_comment`, with GitHub replaced by a fake `urlopen` that records
 
 Sabotage check: removing the allow-list check, the approved-body check or the pause on a missing
 approver turns 4 of these tests red.
+
+## Reminder ledger (H3, offline)
+
+`tests/test_ledger.py` runs the fixture sweep (saved readings, real rules) through `sweep.draft_new`
+with a fake drafter and a real SQLite ledger in a temporary folder. The fixture has 4 threads that
+need a draft.
+
+| Case | Expected | Result |
+|---|---|---|
+| first sweep | 4 drafts, all `new` | pass |
+| second sweep, nothing changed | 0 drafts, drafter not called, 4 `unchanged` | pass |
+| one thread gets a label and a later `updated_at` | exactly 1 draft (that thread, `changed`) | pass |
+| same changed snapshot again | 0 drafts | pass |
+| a draft that failed its checks | not recorded; drafted again next sweep | pass |
+| one second before / at `expiry_days` | `unchanged` / `expired` | pass |
+| same state, different action | `action_changed` | pass |
+| two repos, same issue number | independent | pass |
+| `followthrough sweep --draft` twice (CLI, fake drafter) | saved 4, then saved 0 | pass |
+| ledger file contents | no thread title or comment text | pass |
+
+Sabotage check: making the ledger forget rows, recording failed drafts, ignoring expiry, or dropping
+labels from the state hash each turns at least one of these tests red (6, 1, 1 and 12 tests).
+
+OpenMinion memory, measured for ADR 0007 (`tests/test_memory_gap.py`, 6 tests pass on 0.1.23):
+`list` returns records past `expires_at` (also with `valid_at` / `as_of`); `search` by a full key
+also returns another key; a namespace with `/` is rejected; upsert by key keeps one live record.
