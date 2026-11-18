@@ -54,6 +54,11 @@ def build_parser(lang: str) -> argparse.ArgumentParser:
     schedule.add_argument("--daily", metavar="HH:MM", required=True, help=t("cli.daily_help", lang))
     schedule.add_argument("--repo", metavar="OWNER/NAME", default="OWNER/NAME", help=t("cli.repo_help", lang))
     schedule.add_argument("--out", metavar="DIR", help=t("cli.out_help", lang))
+    post = sub.add_parser("post", help=t("cli.post_help", lang), description=t("cli.post_help", lang))
+    post.add_argument("--lang", choices=LANGS, default=argparse.SUPPRESS, help=t("cli.lang_help", lang))
+    post.add_argument("--repo", metavar="OWNER/NAME", required=True, help=t("cli.post_repo_help", lang))
+    post.add_argument("--number", type=int, required=True, help=t("cli.post_number_help", lang))
+    post.add_argument("--draft", metavar="PATH", required=True, help=t("cli.post_draft_help", lang))
     return parser
 
 
@@ -176,6 +181,12 @@ def main(argv: list[str] | None = None) -> int:
         return doctor(args, lang)
     if args.command == "schedule":
         return schedule_cmd(args, lang)
+    if args.command == "post":
+        if args.repo.count("/") != 1:
+            return _fail(t("cli.repo_required", lang))
+        from . import approve
+
+        return approve.run(args.repo, args.number, _path(args.draft), lang, ROOT)
     parser.print_help()
     return EXIT_OK
 

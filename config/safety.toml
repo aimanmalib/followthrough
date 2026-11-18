@@ -4,5 +4,6 @@ stop_file = "state/STOP"     # repo-local stop file, same effect
 stop_exit_code = 5
 
 # Repos the agent may comment on, after approval. Empty = posting is off everywhere.
+# Set to the project's own private sandbox for the approval demo (ADR 0009).
 # Only the private sandbox repo may ever appear here; third-party repos are read-only.
-allow_post_repos = []
+allow_post_repos = ["aimanmalib/followthrough-sandbox"]

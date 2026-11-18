@@ -96,9 +96,15 @@ def test_repo_off_the_allow_list_is_refused_before_model_and_http(env):
     assert asked == [] and gh.requests == [] and fake.requests == []
 
 
-def test_default_allow_list_is_empty_so_nothing_posts(env):
-    result, gh, fake = env(lambda *a: post.ALLOW_ONCE, safety=config.load("safety"))
-    assert config.load("safety")["allow_post_repos"] == []
+def test_empty_allow_list_means_nothing_posts(env):
+    result, gh, fake = env(lambda *a: post.ALLOW_ONCE, safety=dict(config.load("safety"), allow_post_repos=[]))
+    assert result.status == "refused_repo" and gh.requests == [] and fake.requests == []
+
+
+def test_shipped_allow_list_refuses_the_measured_third_party_repo(env):
+    shipped = config.load("safety")
+    assert shipped["allow_post_repos"] == [SANDBOX]
+    result, gh, fake = env(lambda *a: post.ALLOW_ONCE, repo="openminion/openminion", safety=shipped)
     assert result.status == "refused_repo" and gh.requests == [] and fake.requests == []
 
 
@@ -183,3 +189,14 @@ def test_handoff_delegate_does_not_forward_approval_so_post_is_never_behind_one(
     decl.handler({"message": "post it"})
     assert Target.calls == [{}]
     assert "Handoff" not in Path(post.__file__).read_text(encoding="utf-8")
+
+
+def test_publisher_message_is_an_explicit_tool_request():
+    """Regression (sandbox demo): a dated body sent as a plain request was classified as a freshness
+    question and answered without calling post_comment. OpenMinion skips that classifier only for an
+    explicit tool request, so the rendered message must parse as one."""
+    from openminion.modules.brain.bootstrap.freshness_classify import _DIRECT_TOOL_VERB_RE
+
+    message = config.load("prompts")["publisher"]["message"].format(repo=SANDBOX, number=7, body=BODY)
+    match = _DIRECT_TOOL_VERB_RE.match(message)
+    assert match is not None and match.group(1) == "post_comment"
