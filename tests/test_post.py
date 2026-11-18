@@ -7,6 +7,7 @@ stop file -> allow-list -> approval -> exactly one POST.
 
 from __future__ import annotations
 
+import ast
 import io
 import json
 import re
@@ -160,11 +161,68 @@ def test_poster_never_shows_the_token(monkeypatch):
     assert "secret-value" not in repr(poster)
 
 
-def test_post_module_is_the_only_writer():
+# Every module that can send a write request, and why. post.py is the only path to GitHub; replay.py
+# forwards model API calls to its configured `upstream` while recording, and refuses a GitHub upstream
+# (tests/test_replay.py::test_the_recorder_refuses_a_github_upstream binds that limit).
+ALLOWED_WRITERS = {
+    "post.py": "the approved comment, to a repository in safety.allow_post_repos",
+    "replay.py": "the model API call, to config/replay.toml upstream only (never a GitHub host)",
+}
+WRITE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+READ_METHODS = {"GET", "HEAD"}
+
+
+def _writes(source: str) -> bool:
+    """True when the module can send a write request. A request with a body is a write whether or not
+    `method=` is spelled out (urllib sends POST when `data` is set), and so is a method that is not a
+    known read constant."""
+    tree = ast.parse(source)
+    consts = {t.id: n.value.value for n in ast.walk(tree) if isinstance(n, ast.Assign)
+              and isinstance(n.value, ast.Constant) for t in n.targets if isinstance(t, ast.Name)}
+
+    def value(node):
+        if isinstance(node, ast.Constant):
+            return node.value
+        return consts.get(node.id) if isinstance(node, ast.Name) else node
+
+    for call in (n for n in ast.walk(tree) if isinstance(n, ast.Call)):
+        if any(value(a) in WRITE_METHODS for a in [*call.args, *(k.value for k in call.keywords)]
+               if isinstance(a, (ast.Constant, ast.Name))):
+            return True
+        func = call.func
+        name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
+        if name in ("Request", "urlopen"):
+            kw = {k.arg: k.value for k in call.keywords}
+            if "data" in kw or len(call.args) >= 2:
+                return True
+            if "method" in kw and value(kw["method"]) not in READ_METHODS:
+                return True
+    return False
+
+
+@pytest.mark.parametrize("snippet", [
+    'urllib.request.Request(url, data=b"x")',
+    'urllib.request.Request(url, b"x", {})',
+    'urllib.request.urlopen(url, data=b"x")',
+    'urllib.request.Request(url, method="PATCH")',
+    'M = "DELETE"\nurllib.request.Request(url, method=M)',
+    'urllib.request.Request(url, method=pick())',
+    'conn.request("POST", "/x")',
+])
+def test_the_writer_check_sees_every_way_to_send_a_body(snippet):
+    assert _writes(snippet)
+
+
+@pytest.mark.parametrize("snippet", ['R = "GET"\nurllib.request.Request(url, headers={}, method=R)',
+                                     "urllib.request.urlopen(req, timeout=5)"])
+def test_the_writer_check_lets_reads_through(snippet):
+    assert not _writes(snippet)
+
+
+def test_only_the_named_modules_write():
     src = Path(post.__file__).resolve().parent
-    writers = [p.name for p in src.glob("*.py")
-               if re.search(r"method *= *[\"'](POST|PUT|PATCH|DELETE)[\"']", p.read_text(encoding="utf-8"))]
-    assert writers == ["post.py"]
+    writers = sorted(p.name for p in src.rglob("*.py") if _writes(p.read_text(encoding="utf-8")))
+    assert writers == sorted(ALLOWED_WRITERS)
 
 
 def test_handoff_delegate_does_not_forward_approval_so_post_is_never_behind_one():

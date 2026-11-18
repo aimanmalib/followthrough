@@ -34,11 +34,15 @@ answers that were really given by the model once.
   remaining time budget, memory record ids), the working folder (`cwd`, `workspace_root`) and the
   "Runtime Grounding" section, which the runtime cuts at a fixed length, so a longer or shorter folder
   name changes what survives the cut.
-- The recorder forwards to the model API (`upstream`), the same call OpenMinion makes in every sweep;
-  it is not a write path to GitHub. It refuses a GitHub upstream (`forbidden_upstream_hosts`) at start,
-  so `post.py` stays the only code that can write to a repository. The request method is the one implied
-  by a body (urllib), so the project's static check for explicit write methods outside `post.py` still
-  holds for `src/`.
+- The recorder forwards to the model API (`upstream`), the same call OpenMinion makes in every sweep,
+  with an explicit `method="POST"`. That makes `replay.py` a second module that sends a request with a
+  body, and it is named as such: the writer check in `tests/test_post.py` lists exactly `post.py` (the
+  approved comment, to an allowed repository) and `replay.py` (the model API call, to `upstream` only).
+  The check reads the syntax tree, so a request with `data=` and no `method=`, a positional body or a
+  non-read method held in a variable also counts as a write; dropping `method=` cannot hide a writer.
+  The recorder refuses a GitHub upstream (`forbidden_upstream_hosts`) at start, and
+  `test_the_recorder_refuses_a_github_upstream` binds that limit, so `post.py` stays the only code that
+  can write to a repository.
 - `--serve` answers from the files only. A request without a recording gets an error reply
   (`miss_status`; OpenMinion's structured calls retry it, and every retry misses again), the closest saved
   request is diffed to standard error with long prompt lines shown around the change, and the run exits 4

@@ -199,8 +199,10 @@ class ReplayServer:
         out = {k: v for k, v in headers.items() if k.lower() in wanted}
         if self.api_key:
             out["x-api-key"] = self.api_key
-        # A request with a body is sent as the model API call it is; the recorder talks to `upstream` only.
-        request = urllib.request.Request(self.cfg["upstream"].rstrip("/") + path, data=body, headers=out)
+        # The second, named writer besides post.py: it sends the model API call to `upstream` only, and
+        # __init__ refuses a GitHub upstream (tests/test_post.py lists it, tests/test_replay.py binds it).
+        request = urllib.request.Request(self.cfg["upstream"].rstrip("/") + path, data=body, headers=out,
+                                         method="POST")
         try:
             with urllib.request.urlopen(request, timeout=float(self.cfg["upstream_timeout_s"])) as reply:
                 status, content_type, data = reply.status, reply.headers.get("content-type", ""), reply.read()
