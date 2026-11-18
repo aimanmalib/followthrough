@@ -1,0 +1,143 @@
+/* Follow-Through digest. Every colour is a token here; nothing else in the page sets a colour. */
+:root {
+  --paper: #f5f2ea;
+  --card: #fffdf8;
+  --ink: #1d1c1a;
+  --ink-soft: #57534b;
+  --rule: #d9d3c5;
+  --thread: #bdb4a2;
+  --due: #b3360f;
+  --takeover: #7a2d6b;
+  --reply: #0f6670;
+  --verify: #2f6b2a;
+  --none: #6b665c;
+  --warn-bg: #fbe9d7;
+  --warn-ink: #7a2a07;
+  --serif: "Iowan Old Style", "Charter", "Palatino Linotype", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #171614;
+    --card: #201f1c;
+    --ink: #eeeae1;
+    --ink-soft: #b5ae9f;
+    --rule: #3a3731;
+    --thread: #5a554b;
+    --due: #f2895f;
+    --takeover: #d79ccb;
+    --reply: #6cc6cf;
+    --verify: #8fcf86;
+    --none: #a39d90;
+    --warn-bg: #3a2416;
+    --warn-ink: #f6c3a2;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.5 var(--sans);
+}
+.sheet { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+.kicker, .label {
+  margin: 0;
+  font: 600 0.75rem/1.2 var(--sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.repo {
+  margin: 0.5rem 0 0.75rem;
+  font: 600 clamp(1.6rem, 6vw, 2.4rem)/1.1 var(--serif);
+  overflow-wrap: break-word;
+}
+.asof, .source { margin: 0.15rem 0; color: var(--ink-soft); }
+.asof time, .num, .count, .metric dd { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.partial {
+  margin: 1.5rem 0 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--due);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+.tally, .metrics, .action { margin-top: 2.25rem; }
+.tally-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.tally-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.tally-item {
+  min-width: 0;
+  padding: 0.75rem 0.875rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--tone);
+  border-radius: 4px;
+}
+.tally-item .count { display: block; font-size: 2rem; line-height: 1; color: var(--tone); }
+.tally-item .name { display: block; margin-top: 0.375rem; font-size: 0.875rem; color: var(--ink-soft); }
+.tally-item.is-zero .count { color: var(--ink-soft); }
+.metric-list {
+  margin: 0.75rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding: 0.875rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.metric { min-width: 0; margin: 0; }
+.metric dt { font-size: 0.8125rem; color: var(--ink-soft); }
+.metric dd { margin: 0.125rem 0 0; font-size: 1.125rem; }
+.action h2 {
+  margin: 0;
+  font: 600 1.375rem/1.2 var(--serif);
+}
+.action h2 .count { margin-left: 0.375rem; font-size: 1rem; color: var(--tone); white-space: nowrap; }
+.items {
+  list-style: none;
+  margin: 0.875rem 0 0;
+  padding: 0 0 0 1.125rem;
+  border-left: 2px solid var(--thread);
+}
+.item { position: relative; padding: 0.5rem 0; }
+.item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1.125rem - 6px);
+  top: 0.95rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tone);
+  border: 2px solid var(--paper);
+}
+.item .num { font-weight: 600; color: var(--tone); margin-right: 0.5rem; }
+.item .why { overflow-wrap: anywhere; }
+.tone-FOLLOW_UP_DUE { --tone: var(--due); }
+.tone-TAKEOVER_ALLOWED { --tone: var(--takeover); }
+.tone-MAINTAINER_REPLY_PENDING { --tone: var(--reply); }
+.tone-READY_TO_VERIFY { --tone: var(--verify); }
+.tone-NO_ACTION { --tone: var(--none); }
+.foot {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+.foot p { margin: 0.25rem 0; }
+.foot .made { margin-top: 0.75rem; font-family: var(--mono); font-size: 0.8125rem; }
+@media (min-width: 40rem) {
+  .sheet { padding-top: 3.5rem; }
+  .tally-list { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .tally-item:last-child:nth-child(odd) { grid-column: auto; }
+}

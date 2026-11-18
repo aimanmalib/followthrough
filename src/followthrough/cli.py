@@ -97,7 +97,7 @@ def _fail(message: str) -> int:
 
 
 def sweep(args: argparse.Namespace, lang: str) -> int:
-    from . import digest, measure, sweep as sw, telemetry
+    from . import digest, measure, page, sweep as sw, telemetry
 
     policy, models = load("policy"), load("models")
     started, started_clock = datetime.now(UTC), time.monotonic()
@@ -148,6 +148,8 @@ def sweep(args: argparse.Namespace, lang: str) -> int:
                             digest=built, outcomes=report.outcomes, reading=extra.get("reading"),
                             requests=requests, limits=limits)
     measure.write(folder, metrics, ops["measure"]["file"], requests, ops["measure"]["http_log"])
+    page.write(folder, page.render(built, metrics, lang, policy["digest"]["list_actions"]),
+               policy["digest"]["html_file"])
     print(json.dumps(built, ensure_ascii=False, indent=1) if args.format == "json" else markdown, end="")
     print(t("cli.written", lang, folder=folder), file=sys.stderr)
     return EXIT_PARTIAL if report.stopped else EXIT_OK

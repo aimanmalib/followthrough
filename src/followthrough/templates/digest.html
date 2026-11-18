@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="$lang">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>$title</title>
+<style>
+$css
+</style>
+</head>
+<body>
+<main class="sheet">
+<header class="mast">
+<p class="kicker">$kicker</p>
+<h1 class="repo">$repo</h1>
+<p class="asof">$as_of</p>
+<p class="source">$source</p>
+</header>
+$partial
+<section class="tally" aria-labelledby="tally-h">
+<h2 id="tally-h" class="label">$tally_heading</h2>
+<ol class="tally-list">
+$tally
+</ol>
+</section>
+$metrics
+$sections
+<footer class="foot">
+<p>$guard_note</p>
+<p>$privacy_note</p>
+<p class="made">$made_by</p>
+</footer>
+</main>
+</body>
+</html>

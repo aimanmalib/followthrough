@@ -41,6 +41,7 @@ cache_dir = "state/readings"
 [digest]
 # Actions listed thread by thread in the digest; every other action is counted only.
 list_actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "READY_TO_VERIFY"]
+html_file = "digest.html"   # one self-contained page in the --lang language, next to digest.md/json
 
 [ledger]
 # One row per thread: state hash + last action + when it was drafted. A new draft only when the hash or
