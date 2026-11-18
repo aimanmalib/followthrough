@@ -233,3 +233,52 @@ author roles are carried in the text and the reader still classified both thread
 clock is moved with `--now` rather than waiting 8 days. Total project spend after the demo: USD 0.85
 of 20.00.
 
+
+## Live sweep (read-only)
+
+`openminion/openminion`, 2026-11-18 (01:34 to 03:03 UTC), openminion 0.1.23, reader
+`claude-haiku-5-5`, run on a shared host under heavy load (load average 24 to 43 on 16 cores
+during the runs). Command: `followthrough sweep --live --repo openminion/openminion --format json`
+(no `--draft`: nothing was drafted for this repository). Per requirement 4.10 only counts are
+published here; the snapshot, readings and digest items stay in untracked folders.
+
+Snapshot: 108 open threads (79 issues, 29 pull requests). Every snapshot made 225 GitHub requests,
+all `GET`; the first returned 200/304 and took 125 s, the later ones were all 304 (ETag cache).
+**Write requests to the repository across all runs: 0.**
+
+| Run | Setup | Process wall time | `metrics.json` seconds | Model turns | Readings that passed the guard / rejected | Failed turns (timeout or provider / invalid reply) | Threads not reached | Stopped by | USD |
+|---|---|---|---|---:|---|---|---:|---|---:|
+| 1 | 8 workers, 8 runtimes on one SQLite file | 5 min 59 s (crashed) | not written | 16 | not written | not written | not written | crash: `sqlite3.OperationalError: database is locked` | 0.254882 |
+| 2 | 8 workers, one home each, OpenMinion's 90 s turn timeout | 11 min 41 s | 670.8 | 51 | 5 / 6 | 37 / 3 | 57 | USD limit | 0.901368 |
+| 3 | 4 workers, 240 s turn timeout, 16-minute start limit | 17 min 29 s | 1,017.0 | 35 | 9 / 10 (+5 from cache) | 8 / 8 | 68 | time limit | 0.473679 |
+| 4 | same as run 3, second run (reading cache) | 23 min 46 s | 1,053.6 | 21 | 5 / 6 (+14 from cache) | 6 / 4 | 73 | time limit | 0.310754 |
+
+Requirement H1 (one sweep finishes in 20 minutes, under USD 1.00, with 0 writes):
+
+- 0 write requests: **met** in every run (225 of 225 requests were `GET`).
+- USD 1.00 per sweep: **met** in every run. Run 2 stopped at the limit; 42 of its 51 turns
+  failed and were booked at the USD 0.02 reserve, because a failed turn loses its token counts.
+- 20 minutes: **not met.** Runs 3 and 4 stopped starting turns at minute 16 as designed, but run 4's
+  process ended 23 min 46 s after it started, 6 min after `metrics.json` was written. The cause
+  is not yet confirmed. Run 4 also ran next to this repository's own test suite on the same host.
+- A complete sweep: **not met.** No run read all 108 threads. With the reading cache, each run
+  sends only threads without a good reading to the model. After runs 2 to 4, 19 of 108 threads hold a reading
+  that passed the guard.
+
+Throughput: a reader turn alone took 27 s. Eight turns on one shared runtime took 305 s; with one
+runtime each, 94.5 s (one SQLite file, before run 1). On the loaded host, 4 workers averaged 1.3
+to 2.2 turns per minute, and many turns ran past 90 s.
+
+Quote guard (H6), fresh model readings only: 6 of 11 rejected (run 2), 10 of 19 (run 3), 6 of 11
+(run 4), so 22 of 41 overall (0.54). 21 of the 22 rejections were `follow_up_time_not_found`:
+the reader gave a `last_follow_up_at` that matches no maintainer post in the thread. The other was
+`open_request_incomplete`. Rejected readings count as `unclear` and are never cached.
+Invalid replies (15 in runs 2 to 4) were text around the JSON (`reader: {...}`) or prose instead of
+a reading. In one of the probes a reader replied with a refusal for lack of "an exact date" (the
+runtime's freshness check, see the sandbox demo above).
+
+Digest of run 4 (counts only): `FOLLOW_UP_DUE` 3, `READY_TO_VERIFY` 6, `NO_ACTION` 99, of which
+83 were not read in that run.
+
+Total spend on these runs and the four 8-thread probes before them: USD 2.381; spend ledger
+total after F9: USD 3.233 of the USD 20.00 limit.
