@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t">
+  <title id="t">Follow-Through</title>
+  <defs>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1f26"/>
+      <stop offset="1" stop-color="#121418"/>
+    </linearGradient>
+  </defs>
+  <!-- ink tile -->
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="url(#tile)"/>
+  <rect x="17" y="17" width="222" height="222" rx="55" fill="none" stroke="url(#rim)" stroke-width="2"/>
+  <!-- mark: an issue thread (spine and two posts) and the follow-up that loops back to it, in amber -->
+  <g transform="translate(-11 0)">
+  <line x1="96" y1="72" x2="96" y2="150" stroke="#f4f4f1" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="96" cy="80" r="14" fill="#f4f4f1"/>
+  <circle cx="96" cy="128" r="14" fill="#f4f4f1"/>
+  <path d="M96 168 C96 200 160 200 160 164 L160 116" fill="none" stroke="#e8b04a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M138 128 L160 100 L182 128" fill="none" stroke="#e8b04a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
