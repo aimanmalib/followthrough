@@ -52,6 +52,7 @@ demo/run.sh
 Hanya perlukan Docker. Ia membina imej kecil dan menjalankan saluran sebenar atas repositori sampel sintetik, dengan
 setiap jawapan model dimainkan semula dari `fixtures/recorded/`. Bekas itu tiada rangkaian dan tiada kunci; imej
 dibuang selepas itu. Permintaan yang tidak pernah dirakam menggagalkan larian dengan beza, bukan menghubungi API.
+Panduan demo (bahasa Inggeris): [`demo/README.md`](demo/README.md), dari sapuan ke digest, draf dan kelulusan.
 
 Tanpa Docker, sampel yang sama berjalan atas bacaan tersimpan tanpa model:
 

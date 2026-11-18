@@ -5,5 +5,5 @@
     - "@aimanmalib"
   status: active
   created: 2026-11-17
-  version: v0.0.1
+  version: v1.0.0
   tags: [python, cli, openminion, github, maintainers, agent]

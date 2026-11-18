@@ -62,8 +62,8 @@ Needs Docker only. It builds a small image and runs the real pipeline on the syn
 subagent per thread, the quote check, the rules and the drafter. It prints the digest and the saved drafts.
 Every model answer is replayed from `fixtures/recorded/`, recorded once from the real API with
 `followthrough replay --record`. The container has no network and no key, and the image is removed afterwards.
-A request that was never recorded fails the run with a diff instead of reaching the API. A walk-through of what
-to look at is in [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md), "Key-free demo".
+A request that was never recorded fails the run with a diff instead of reaching the API. The demo guide
+[`demo/README.md`](demo/README.md) walks from sweep to digest to draft to approval, with what to look at in each step.
 
 Without Docker, the same sample runs on saved readings with no model at all:
 
@@ -232,6 +232,8 @@ The agent itself calls Anthropic models through OpenMinion at run time, within t
 | [`repro/`](repro/README.md) | key-free reproduction scripts for the findings |
 | [`STATUS.md`](STATUS.md) | what is done and what is not |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | set-up, tests and rules for changes |
+| [`demo/README.md`](demo/README.md) | demo guide: sweep, digest, draft, approval |
+| [`RELEASE.md`](RELEASE.md) | release notes |
 | [`CHANGELOG.md`](CHANGELOG.md) | changes by version |
 | [`SECURITY.md`](SECURITY.md) | how to report a vulnerability |
 

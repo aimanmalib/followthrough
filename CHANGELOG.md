@@ -1,9 +1,11 @@
 # Changelog
 
 All notable changes to this project are documented here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). No version has been released yet.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Release notes: [`RELEASE.md`](RELEASE.md).
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-11-18
 
 ### Added
 
@@ -21,3 +23,7 @@ All notable changes to this project are documented here. The format follows
   no network.
 - `repro/`: three key-free reproduction scripts for OpenMinion findings; `BUILDING_BLOCKS.md` and `LEARNED.md`.
 - Community files, README in English and Malay, logo.
+- `demo/README.md`: a guide from sweep to digest to draft to approval.
+
+[Unreleased]: https://github.com/aimanmalib/followthrough/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/aimanmalib/followthrough/releases/tag/v1.0.0

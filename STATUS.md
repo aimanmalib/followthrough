@@ -3,7 +3,7 @@
 Status of **Follow-Through** for Cortensor Hackathon #5. Every number here is from
 [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md).
 
-**Version:** 0.0.1, not released yet · **OpenMinion:** 0.1.23 (pinned) · **Last updated:** 18 November 2026
+**Version:** [1.0.0](RELEASE.md) · **OpenMinion:** 0.1.23 (pinned) · **Last updated:** 18 November 2026
 
 ## Done
 
@@ -18,6 +18,7 @@ Status of **Follow-Through** for Cortensor Hackathon #5. Every number here is fr
 - [x] Label agreement measured on a held-out test set
 - [x] Key-free demo from recorded model answers, run in public CI
 - [x] Three OpenMinion findings with key-free reproduction scripts
+- [x] Tagged release `v1.0.0`, with a demo guide
 
 ## Not done, or not met
 
@@ -25,6 +26,5 @@ Status of **Follow-Through** for Cortensor Hackathon #5. Every number here is fr
 - [ ] Label agreement of at least 0.80 (measured 0.171 after the quote check)
 - [ ] Upstream issues for the findings (drafted, not filed)
 - [ ] Fix pull request upstream
-- [ ] Demo video
-- [ ] Tagged release
+- [ ] Demo video published (recorded, not published yet)
 - [ ] Final measurements on the newest OpenMinion release before the feature freeze

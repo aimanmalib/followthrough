@@ -1,6 +1,6 @@
 [project]
 name = "followthrough"
-version = "0.0.1"
+version = "1.0.0"
 description = "An OpenMinion agent that tells maintainers who is waiting on whom, drafts follow-ups, and waits for a human to approve them."
 readme = "README.md"
 license = "MIT"
