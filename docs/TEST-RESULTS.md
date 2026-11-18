@@ -432,3 +432,25 @@ no model key, only 127.0.0.1 reached). Exit code 0 means the finding is still th
   `BUILDING_BLOCKS.md`, a missing README section, a non-local URL in a script) turns 1, 1 and 1 test red.
 - Upstream duplicates searched on 2026-11-18 (`gh issue list --state all --search`, read-only): no
   existing issue for the three findings; related closed #371 and #617, open #677, #720, #726, #774.
+
+## Demo video
+
+Cut on 2026-11-18 from the real captures (digest page, fixture sweep in a terminal, sandbox issue before
+and after the approved comment) and title cards; every number on screen and in the narration is taken
+from the sections above. Measured on the final file with `ffprobe` and `ffmpeg ebur128`:
+
+| Check | Result |
+|---|---|
+| Duration (format / video / audio) | 118.4 s / 118.4 s / 118.4 s |
+| Picture | 1920x1080, 30 fps, H.264 |
+| Integrated loudness | -16.5 LUFS |
+| True peak | -2.5 dBTP |
+| First 15 s | 0.0 s black, 0.0 s frozen; product UI on screen from 13.2 s |
+| Captions | burned in (English), plus a sidecar `.srt` with 53 cues |
+| Music | none |
+| Narration | ElevenLabs clone of the author's voice, declared on the end card |
+
+Transcription of the final audio (ElevenLabs Scribe, English) against the script: 305 script words,
+325 transcribed, match ratio 0.937. Every difference is a spoken form ("31" heard as "thirty one",
+"subagent" as "sub agent", "#5" as "number five") or a filler word the narration adds ("and", "it").
+The video is not published yet.
