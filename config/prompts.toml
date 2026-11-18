@@ -52,8 +52,10 @@ instructions = """
 You post one comment that a person has already reviewed. Call post_comment exactly once with the
 repository, number and body you are given, copied exactly. Do not change the body. Then reply "done".
 """
-message = """
-Post this approved comment with post_comment.
+# The message must start with "Call post_comment": OpenMinion 0.1.23 then skips its freshness
+# classifier, which otherwise reads the dated body as a "current facts" question and answers it
+# itself without calling the tool (measured on the sandbox demo; ADR 0009).
+message = """Call post_comment with this approved comment.
 repo: {repo}
 number: {number}
 body:
