@@ -392,3 +392,25 @@ Sabotage: the English page with the soft text colour set to `#c9c3b5` and a 400 
 dark desktop view passed, as expected, because neither change touches it. `tests/test_page.py`: 10 tests
 (language, counts, self-contained, no thread text, escaping, partial banner, colour tokens, CLI); removing
 the escape of the repository name turns the escaping test red.
+
+## OpenMinion findings (repro)
+
+The three scripts in `repro/`, run on the build host on 2026-11-18 (openminion 0.1.23, Python 3.12,
+no model key, only 127.0.0.1 reached). Exit code 0 means the finding is still there.
+
+| Script | Output | Exit | Wall time |
+|---|---|---|---|
+| `tool-datetime-argument` | `str` control: 1 handler call, `completed`; `datetime`: 0 handler calls, `failed`, reply `State machine error: RUNTIME_ERROR: Object of type datetime is not JSON serializable` | 0 | 61.7 s |
+| `shared-runtime-turns-run-one-at-a-time` | 4 threads, one runtime, model answers after 0.5 s: no tools = at most 4 requests in flight, 16 requests, 9.9 s; one decorated tool = at most 1 in flight, 16 requests, 17.7 s; all 8 turns `completed` | 0 | not recorded (two runtimes boot per run) |
+| `cron-run-ok-without-daemon` | `cron create` rc 0; `cron run` with no daemon rc 0, `ok: true`, state `queued`; still `queued` after 30 s; `cron pause` leaves `enabled: false` | 0 | not recorded |
+
+- First version of the shared-runtime script, without a warm-up turn: the four concurrent first turns
+  on a fresh runtime failed with `sqlite3.IntegrityError: UNIQUE constraint failed: migrations.version`
+  (exit 1, nothing measured). The script now runs one turn before timing.
+- First version of the cron script read the task id from the wrong level of the CLI's JSON
+  (`{"data": {...}}`) and exited 1 after `cron create`; fixed before the run above.
+- After each run: no `om-repro-*` temporary home left, no daemon started.
+- `tests/test_findings.py` (4 tests) keeps the package consistent; sabotage (a wrong `file:line` in
+  `BUILDING_BLOCKS.md`, a missing README section, a non-local URL in a script) turns 1, 1 and 1 test red.
+- Upstream duplicates searched on 2026-11-18 (`gh issue list --state all --search`, read-only): no
+  existing issue for the three findings; related closed #371 and #617, open #677, #720, #726, #774.
