@@ -39,8 +39,7 @@ from [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md), which also lists every fail
 - A live sweep of all 108 open OpenMinion threads did not finish within 20 minutes on the build host.
 - Label agreement was 0.171 after the quote check (0.293 as read), against a target of 0.80.
 - The three OpenMinion findings are drafted, not filed upstream. No fix pull request exists.
-- OpenMinion is pinned to 0.1.23. The upgrade to the newest SDK release before the feature freeze is still to come
-  and will be recorded here.
+- OpenMinion is pinned to 0.1.23. See "Upgrade" below for the feature freeze check.
 
 ### Install
 
@@ -49,3 +48,12 @@ git clone https://github.com/aimanmalib/followthrough && cd followthrough
 demo/run.sh        # Docker only, no key
 uv sync && uv run followthrough --help
 ```
+
+## Upgrade
+
+Feature freeze check, 2026-11-21 (ADR 0015): the newest `openminion` release on PyPI was 0.1.23, the version pinned
+since the first commit, so the version stays **0.1.23 → 0.1.23** and nothing broke. On that version the offline suite
+passed (290 tests), and all three repro scripts still show their findings. The final live sweep and the second H2 test
+run are in [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md) under "Feature freeze measurement": 0 writes, USD 0.35, the
+process ended in 18 min 21 s with 32 of 134 threads read; label agreement 0.204 after the quote check (target 0.80,
+not met). From this point source changes are fixes only.

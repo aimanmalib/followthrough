@@ -468,3 +468,61 @@ The video is not published yet.
 The demo guide `demo/README.md` budgets about 3 minutes for steps 1 to 3 (run, digest, drafts) and about 2 minutes
 for step 4 (approval on your own repository), which is not part of the offline demo; the measured approval run is
 in "Sandbox approval demo" above.
+
+## Feature freeze measurement
+
+2026-11-21, ADR 0015. The newest `openminion` release on PyPI was **0.1.23**, the pinned version, so there was no
+upgrade; every number below is on 0.1.23 with reader `claude-haiku-5-5`, on the shared build host (load average
+12 to 25 on 16 cores during the runs).
+
+| Check | Result |
+|---|---|
+| Offline suite on Depot CI (`scripts/gerbang-ujian.sh`, commit 9048055) | 290 passed in 35.1 s |
+| `repro/tool-datetime-argument/repro.py` | rc 0 (finding still present): a `datetime` parameter makes the run fail with "Object of type datetime is not JSON serializable"; the `str` control completes. 67 s |
+| `repro/shared-runtime-turns-run-one-at-a-time/repro.py` | rc 0 (still present): 4 threads on one runtime, most model requests in flight at once = 4 without tools, 1 with a decorated tool (11.7 s against 22.9 s). 91 s |
+| `repro/cron-run-ok-without-daemon/repro.py` | rc 0 (still present): `cron run` reports success while the run stays `queued` 30 s later with no daemon. 187 s |
+
+### Live sweep, run 5 (H1)
+
+`followthrough sweep --live --repo openminion/openminion --format json`, started 13:03 UTC, same setup as runs 3
+and 4 above (4 workers, 240 s turn timeout, no new turn after minute 16), with the reading cache from those runs.
+Only counts are published.
+
+| Measure | Result |
+|---|---|
+| Open threads in the snapshot | 134 |
+| GitHub requests | 347, all `GET` (230 returned 200, 117 returned 304). **Write requests: 0** |
+| Process wall time | 18 min 21 s (`metrics.json`: 1,007.9 s) |
+| Model turns | 31: 16 passed the guard, 7 rejected by the guard, 8 invalid replies |
+| Threads with a reading | 32 (23 fresh, 9 from cache) |
+| Threads not read | 102 (94 not reached before minute 16, 8 invalid replies) |
+| Stopped by | time limit ("no new model turn starts after minute 16.0") |
+| USD | 0.346209 (1,075,590 input and 77,300 output tokens; 10 turns estimated from characters) |
+| Exit code | 3 (digest written, sweep stopped early) |
+
+Requirement H1: 0 writes **met**; under USD 1.00 **met**; process ended within 20 minutes **met in this run**;
+a complete sweep **not met** (32 of 134 threads read). Quote guard (H6) on fresh readings: 7 of 23 rejected (0.30),
+all 7 `follow_up_time_not_found` (one also `open_request_incomplete`).
+Digest counts: `FOLLOW_UP_DUE` 4, `READY_TO_VERIFY` 3, `NO_ACTION` 127, of which 102 were not read.
+
+### Label agreement, test run 2 (H2)
+
+`followthrough agree --set test --snapshot <the run 5 snapshot>`, status labels hidden, no tuning since test
+run 1 (the dev set was not re-read). The newer snapshot has 49 test-set issues (41 in run 1). Wall time 1,021.8 s.
+
+| Run | Issues | Read | Agree after guard | Agree as read | Not read (provider error or timeout / invalid reply) | Guard rejected | USD |
+|---|---:|---:|---|---|---|---:|---:|
+| test 2 | 49 | 37 | 10 (**0.204**) | 17 (**0.347**) | 12 (5 / 7) | 16 | 0.6448 |
+
+Confusion table, model's own answer (rows = expected from the label):
+
+| Expected | maintainer | contributor | release | nobody | not read | Total |
+|---|---:|---:|---:|---:|---:|---:|
+| maintainer | 6 | 6 | 0 | 2 | 7 | 21 |
+| contributor | 6 | 2 | 0 | 0 | 2 | 10 |
+| release | 5 | 0 | 9 | 1 | 3 | 18 |
+
+**H2 (at least 0.80 on the test set): not met**, in both test runs (0.171 and 0.204 after the guard). Test runs
+used: 2 of 2; a third is refused. Of the 16 guard rejections, 12 were `follow_up_time_not_found`.
+
+Spend ledger total after these runs: USD 5.63 of the USD 20.00 limit.

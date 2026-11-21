@@ -178,11 +178,13 @@ All numbers below are copied from [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md)
 - **Approval gate (H4):** in the sandbox demo, `deny` posted nothing, `allow_once` posted exactly 1 comment
   (byte-identical to the saved draft), and a stop file ended the run with exit code 5 before any request.
 - **Reminder ledger (H3):** a second sweep with nothing changed makes 0 drafts; one changed thread makes exactly 1.
-- **Read-only live sweep (H1) on `openminion/openminion`:** 225 of 225 GitHub requests were `GET`, 0 writes, in every
-  run; every run stayed under USD 1.00. The 20-minute target was not met, and no run read all 108 threads (see Limits).
+- **Read-only live sweep (H1) on `openminion/openminion`:** every GitHub request was `GET` (225 per snapshot in
+  runs 1 to 4, 347 in the final run), 0 writes; every run stayed under USD 1.00. No run read every open
+  thread; the final run ended in 18 min 21 s with 32 of 134 read (see Limits).
 - **Quote check (H6):** on fresh live readings it rejected 22 of 41 (0.54), almost all because the model gave a
   follow-up time that matches no maintainer post.
-- **Label agreement (H2):** 0.171 after the quote check and 0.293 as read, on 41 test-set issues, against a target of 0.80.
+- **Label agreement (H2):** 0.171 and 0.204 after the quote check (0.293 and 0.347 as read) in the two test runs, against
+  a target of 0.80.
 - **Key-free replay (H5):** 83 recorded model exchanges answered, 0 missed, digest and drafts byte-identical; the cold CI
   runner finished the replay 32 s after the step started.
 - **Digest page (R4):** 24 of 24 checks passed in Chromium and WebKit (iPhone 13), at 320 px and desktop width, light and
@@ -195,9 +197,9 @@ Docker for the demo, Playwright Chromium and WebKit for the page checks.
 
 ## Limits and honest notes
 
-- **H1 is not met.** On a shared, heavily loaded host a live sweep of the 108 open OpenMinion threads did not finish in
-  20 minutes and no run read every thread. Reader turns of 90 to 240 s were common.
-- **H2 is not met.** Agreement with the repository's status labels is 0.171 after the quote check. The largest gap: issues
+- **H1 is not met.** On a shared, heavily loaded host no live sweep read every open OpenMinion thread in 20 minutes:
+  the final run read 32 of 134 before its time limit. Reader turns of 90 to 240 s were common.
+- **H2 is not met.** Agreement with the repository's status labels is 0.171 and 0.204 after the quote check (two test runs). The largest gap: issues
   labelled `status:maintainer-investigation` whose newest open request is a maintainer's question to the reporter.
 - **The quote check rejects about half of fresh live readings.** That is the guard doing its job, but it means many
   threads end up unclear.

@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Feature freeze on openminion 0.1.23 (no newer release on 2026-11-21) with final measurements; see `RELEASE.md`
+  "Upgrade" and ADR 0015.
+
 ## [1.0.0] - 2026-11-18
 
 ### Added

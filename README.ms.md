@@ -97,14 +97,14 @@ Semua angka dari [`docs/TEST-RESULTS.md`](docs/TEST-RESULTS.md):
 - 282 ujian luar talian lulus dalam CI awam, tanpa kunci dan tanpa rangkaian.
 - Kotak pasir: `deny` tidak mengepos apa-apa, `allow_once` mengepos tepat 1 komen, fail henti menamatkan larian dengan kod keluar 5.
 - Sapuan kedua tanpa perubahan menghasilkan 0 draf; satu benang berubah menghasilkan tepat 1.
-- Sapuan hidup `openminion/openminion`: 225 daripada 225 permintaan GitHub ialah `GET`, 0 tulis, setiap larian di bawah USD 1.00.
-- Persetujuan label: 0.171 selepas semakan petikan (sasaran 0.80, tidak dicapai).
+- Sapuan hidup `openminion/openminion`: setiap permintaan GitHub ialah `GET` (225 setiap snapshot dalam larian 1 hingga 4, 347 dalam larian terakhir), 0 tulis, setiap larian di bawah USD 1.00.
+- Persetujuan label: 0.171 dan 0.204 selepas semakan petikan dalam dua larian ujian (sasaran 0.80, tidak dicapai).
 - Main semula tanpa kunci: 83 pertukaran dijawab, 0 terlepas.
 
 ## Had dan nota jujur
 
-- Sapuan hidup 108 benang OpenMinion tidak siap dalam 20 minit pada hos binaan, dan tiada larian membaca semua benang.
-- Persetujuan dengan label status ialah 0.171, jauh di bawah sasaran 0.80.
+- Tiada sapuan hidup yang membaca semua benang terbuka OpenMinion dalam 20 minit pada hos binaan; larian terakhir membaca 32 daripada 134.
+- Persetujuan dengan label status ialah 0.171 dan 0.204, jauh di bawah sasaran 0.80.
 - Semakan petikan menolak kira-kira separuh bacaan hidup yang segar.
 - Tiga dapatan OpenMinion masih draf; tiada isu atau pull request pembaikan di huluan lagi.
 - Video demo belum diterbitkan.
