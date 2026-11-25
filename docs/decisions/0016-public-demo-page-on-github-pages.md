@@ -15,6 +15,10 @@ same commit always renders the same page.
   environment, runs `followthrough sweep --fixture` in English and in Malay, and publishes the two
   `digest.html` files as `/` and `/ms/` with the official `upload-pages-artifact` and `deploy-pages`
   actions. Pages is set to build from a workflow, not from a `gh-pages` branch.
+- `scripts/build_pages.py` adds to each published copy what a shared link needs and a local digest
+  does not: a description, Open Graph and Twitter card tags (the image is the README screenshot of the
+  same page), language alternates and a tab icon. The site URL, paths and files are in
+  `config/pages.toml`; the description is in `locales/*.toml`. The page body is not changed.
 - The page shows the synthetic sample repository only. No live sweep, no snapshot and no draft from a
   third-party repository is published; those stay out of git.
 - The workflow uses no secrets and has only the `pages: write` and `id-token: write` permissions the
@@ -31,6 +35,6 @@ stale page whenever someone forgets to rebuild it. The workflow rebuilds from th
 
 ## Rollback
 
-Delete `.github/workflows/pages.yml` and turn Pages off in the repository settings
+Delete `.github/workflows/pages.yml`, `scripts/build_pages.py` and `config/pages.toml` and turn Pages off in the repository settings
 (`gh api -X DELETE repos/<owner>/<repo>/pages`). Nothing else depends on the page; the README links
 to it and can point back to the one-command demo.

@@ -138,3 +138,7 @@ v_guard = "{rejected} daripada {checked} ditolak"
 nothing_listed = "Tiada sesiapa sedang menunggu sesiapa sekarang."
 privacy_note = "Halaman ini hanya memuatkan nombor benang, tarikh dan kiraan; tiada teks daripada benang."
 made_by = "followthrough {version} · dibina atas SDK OpenMinion"
+
+[pages]
+description = "Ejen yang menjalankan peraturan susulan CONTRIBUTING sebuah repositori setiap hari dan mendraf setiap susulan untuk diluluskan manusia. Contoh digest bagi repositori sintetik."
+image_alt = "Digest Follow-Through bagi repositori sampel sintetik: susulan yang tiba masanya, ambil alih yang dibenarkan, balasan yang ditunggu dan pembaikan untuk disemak."

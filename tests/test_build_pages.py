@@ -1,0 +1,67 @@
+"""scripts/build_pages.py: the published pages carry preview tags, the icon and image, and an unchanged body."""
+
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+SPEC = importlib.util.spec_from_file_location("build_pages", ROOT / "scripts" / "build_pages.py")
+assert SPEC and SPEC.loader
+build_pages = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(build_pages)
+
+PAGE = ('<!doctype html>\n<html lang="{lang}">\n<head>\n<title>Digest &amp; {lang}</title>\n</head>\n'
+        '<body><p>body {lang}</p></body>\n</html>\n')
+
+
+@pytest.fixture()
+def runs(tmp_path: Path) -> Path:
+    for lang in ("en", "ms"):
+        folder = tmp_path / "runs" / lang / "2026-11-20"
+        folder.mkdir(parents=True)
+        (folder / "digest.html").write_text(PAGE.format(lang=lang), encoding="utf-8")
+    return tmp_path / "runs"
+
+
+def test_builds_one_page_per_language_with_assets(runs: Path, tmp_path: Path) -> None:
+    site = tmp_path / "site"
+    cfg = build_pages.load("pages")
+    written = build_pages.build(runs, site)
+    assert sorted(p.relative_to(site).as_posix() for p in written) == sorted(
+        f"{path}index.html" for path in cfg["paths"].values())
+    for key in ("image", "icon"):
+        assert (site / Path(cfg[key]).name).stat().st_size > 0
+    assert (site / ".nojekyll").exists()
+
+
+def test_head_has_preview_tags_and_body_is_unchanged(runs: Path, tmp_path: Path) -> None:
+    site = tmp_path / "site"
+    build_pages.build(runs, site)
+    cfg = build_pages.load("pages")
+    for lang, path in cfg["paths"].items():
+        html = (site / path / "index.html").read_text(encoding="utf-8")
+        head, body = html.split("</head>", 1)
+        for needle in ('name="description"', 'property="og:title" content="Digest &amp; ' + lang,
+                       'property="og:image" content="' + cfg["site_url"], 'name="twitter:card"', 'rel="icon"',
+                       'hreflang="en"', 'hreflang="ms"'):
+            assert needle in head
+        assert body == PAGE.format(lang=lang).split("</head>", 1)[1]
+
+
+def test_text_is_escaped(runs: Path) -> None:
+    cfg = build_pages.load("pages")
+    tags = build_pages.head_tags({**cfg, "site_url": 'https://x.test/"><script>/'}, "en", "t")
+    assert "<script>" not in tags
+
+
+def test_page_without_head_fails_loudly() -> None:
+    with pytest.raises(ValueError):
+        build_pages.with_tags("<html><body>no head</body></html>", "<meta>")
+
+
+def test_missing_run_fails_loudly(tmp_path: Path) -> None:
+    with pytest.raises(FileNotFoundError):
+        build_pages.build(tmp_path / "nothing", tmp_path / "site")

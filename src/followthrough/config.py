@@ -61,6 +61,7 @@ REQUIRED: dict[str, tuple[str, ...]] = {
         "turn_reserve_usd",
     ),
     "prices": ("models",),
+    "pages": ("site_url", "paths", "image", "image_width", "image_height", "image_alt_key", "icon"),
     "prompts": ("reader.instructions", "reader.message", "drafter.instructions", "drafter.message",
                 "publisher.instructions", "publisher.message"),
     "drafts": ("actions", "subdir", "date_format", "steps"),

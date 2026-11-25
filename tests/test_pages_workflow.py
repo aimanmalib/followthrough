@@ -26,7 +26,7 @@ def test_no_secrets_or_keys() -> None:
 def test_both_languages_published() -> None:
     text = _text()
     assert 'for lang in en ms' in text
-    assert "_site/index.html" in text and "_site/ms/index.html" in text
+    assert "scripts/build_pages.py runs _site" in text
 
 
 def test_minimal_permissions() -> None:

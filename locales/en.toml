@@ -138,3 +138,7 @@ v_guard = "{rejected} of {checked} rejected"
 nothing_listed = "Nobody is waiting on anybody right now."
 privacy_note = "This page holds thread numbers, dates and counts only; no text from the threads."
 made_by = "followthrough {version} · built on the OpenMinion SDK"
+
+[pages]
+description = "An agent that applies a repository's CONTRIBUTING follow-up rules every day and drafts each follow-up for a human to approve. Sample digest for a synthetic repository."
+image_alt = "The Follow-Through digest for the synthetic sample repository: follow-ups due, take-overs allowed, replies pending and fixes to verify."

@@ -1,0 +1,11 @@
+# Public demo page (ADR 0016): what scripts/build_pages.py adds to the published fixture digests.
+# Page text (description) lives in locales/*.toml under [pages].
+site_url = "https://aimanmalib.github.io/followthrough/"
+# Language -> path under site_url. The first entry is the default page.
+paths = { en = "", ms = "ms/" }
+# Repository files copied next to the pages; social cards and the tab icon point at the copies.
+image = "docs/images/digest-desktop.png"
+image_width = 880
+image_height = 932
+image_alt_key = "pages.image_alt"
+icon = "brand/logo-64.png"
