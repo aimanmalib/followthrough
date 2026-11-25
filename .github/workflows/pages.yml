@@ -1,0 +1,49 @@
+# Public demo page: the offline fixture sweep (synthetic sample repository, rule reader, fixed clock)
+# rendered as digest.html in English (/) and Malay (/ms/). No secrets, no network beyond the install.
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NO_COLOR: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.5"
+      - run: uv sync --frozen
+      - name: Render the fixture digest in both languages
+        run: |
+          set -euo pipefail
+          for lang in en ms; do
+            uv run --frozen followthrough sweep --fixture --lang "$lang" --out "runs/$lang" >/dev/null
+          done
+          mkdir -p _site/ms
+          cp runs/en/*/digest.html _site/index.html
+          cp runs/ms/*/digest.html _site/ms/index.html
+          touch _site/.nojekyll
+          test "$(find _site -name index.html | wc -l)" = 2
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

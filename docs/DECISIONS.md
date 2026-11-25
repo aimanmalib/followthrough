@@ -19,5 +19,6 @@ Each design decision is recorded as a short file in [`decisions/`](decisions/); 
 | [0013](decisions/0013-digest-page.md) | The digest as one self-contained HTML page | accepted | 2026-11-18 |
 | [0014](decisions/0014-openminion-findings.md) | OpenMinion findings: local repro scripts, run by hand | accepted | 2026-11-18 |
 | [0015](decisions/0015-feature-freeze-on-openminion-0-1-23.md) | Feature freeze on openminion 0.1.23, final measurements taken early | accepted | 2026-11-21 |
+| [0016](decisions/0016-public-demo-page-on-github-pages.md) | Public demo page on GitHub Pages, built by a workflow | accepted | 2026-11-25 |
 
 A new decision adds a file in `decisions/` and a row here.
