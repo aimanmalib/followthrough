@@ -5,7 +5,7 @@
 <p align="center"><a href="https://github.com/aimanmalib/followthrough/actions/workflows/ci.yml"><img src="https://github.com/aimanmalib/followthrough/actions/workflows/ci.yml/badge.svg" alt="CI"></a> <a href="https://github.com/aimanmalib/followthrough/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/followthrough" alt="Latest release"></a> <a href="https://github.com/aimanmalib/followthrough/blob/main/LICENSE"><img src="https://img.shields.io/github/license/aimanmalib/followthrough" alt="Licence: MIT"></a> <a href="https://pypi.org/project/openminion/0.1.23/"><img src="https://img.shields.io/badge/OpenMinion%20SDK-0.1.23-1c1f26" alt="Built on the OpenMinion SDK 0.1.23"></a></p>
 
 <p align="center"><b>Your CONTRIBUTING follow-up rules, applied every day, with a human approving every comment.</b> · <i>Peraturan susulan CONTRIBUTING anda, dijalankan setiap hari, dengan manusia meluluskan setiap komen.</i><br>
-<a href="#try-it-without-a-key-one-command">one-command demo</a> · <a href="#run-it-on-your-own-repository-two-steps">run on your repo</a> · <a href="#how-follow-through-uses-the-openminion-sdk">how it uses OpenMinion</a> · <a href="#documentation">documentation</a> · <a href="CHANGELOG.md">changelog</a> · <a href="README.ms.md">Bahasa Melayu</a> · Built in Malaysia by Aiman Malib</p>
+<a href="https://aimanmalib.github.io/followthrough/">live demo page</a> · <a href="#try-it-without-a-key-one-command">one-command demo</a> · <a href="#run-it-on-your-own-repository-two-steps">run on your repo</a> · <a href="#how-follow-through-uses-the-openminion-sdk">how it uses OpenMinion</a> · <a href="#documentation">documentation</a> · <a href="CHANGELOG.md">changelog</a> · <a href="README.ms.md">Bahasa Melayu</a> · Built in Malaysia by Aiman Malib</p>
 
 <p align="center"><img src="docs/images/digest-desktop.png" width="660" alt="The digest page for the synthetic sample repository: 2 follow-ups due, 1 take-over allowed, 1 maintainer reply pending, 1 ready to verify, 1 with no action, each thread with its number, the date that drives it and a one-line reason"></p>
 
@@ -53,6 +53,10 @@ Built for **Cortensor Hackathon #5** (November to December 2026) as an agent on 
   `locales/`.
 
 ## Try it without a key: one command
+
+To look first, the [demo page](https://aimanmalib.github.io/followthrough/) shows the digest for the synthetic
+sample repository ([in Malay](https://aimanmalib.github.io/followthrough/ms/)), rebuilt from `main` on every push.
+To run it yourself:
 
 ```sh
 demo/run.sh

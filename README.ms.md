@@ -5,7 +5,7 @@
 <p align="center"><a href="https://github.com/aimanmalib/followthrough/actions/workflows/ci.yml"><img src="https://github.com/aimanmalib/followthrough/actions/workflows/ci.yml/badge.svg" alt="CI"></a> <a href="https://github.com/aimanmalib/followthrough/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/followthrough" alt="Keluaran terkini"></a> <a href="https://github.com/aimanmalib/followthrough/blob/main/LICENSE"><img src="https://img.shields.io/github/license/aimanmalib/followthrough" alt="Lesen: MIT"></a> <a href="https://pypi.org/project/openminion/0.1.23/"><img src="https://img.shields.io/badge/OpenMinion%20SDK-0.1.23-1c1f26" alt="Dibina atas OpenMinion SDK 0.1.23"></a></p>
 
 <p align="center"><b>Your CONTRIBUTING follow-up rules, applied every day, with a human approving every comment.</b> · <i>Peraturan susulan CONTRIBUTING anda, dijalankan setiap hari, dengan manusia meluluskan setiap komen.</i><br>
-<a href="#cuba-tanpa-kunci-satu-arahan">demo satu arahan</a> · <a href="#jalankan-pada-repositori-anda-dua-langkah">jalankan pada repo anda</a> · <a href="#cara-follow-through-memakai-openminion-sdk">cara ia memakai OpenMinion</a> · <a href="README.md">English</a> · <a href="CHANGELOG.md">changelog</a> · Dibina di Malaysia oleh Aiman Malib</p>
+<a href="https://aimanmalib.github.io/followthrough/ms/">halaman demo</a> · <a href="#cuba-tanpa-kunci-satu-arahan">demo satu arahan</a> · <a href="#jalankan-pada-repositori-anda-dua-langkah">jalankan pada repo anda</a> · <a href="#cara-follow-through-memakai-openminion-sdk">cara ia memakai OpenMinion</a> · <a href="README.md">English</a> · <a href="CHANGELOG.md">changelog</a> · Dibina di Malaysia oleh Aiman Malib</p>
 
 <p align="center"><img src="docs/images/digest-phone-ms-dark.png" width="300" alt="Ringkasan dalam Bahasa Melayu pada iPhone 13, skema gelap: 2 susulan perlu dihantar, 1 boleh diambil alih, 1 menunggu jawapan penyelenggara, 1 sedia untuk disahkan, 1 tiada tindakan"></p>
 
@@ -44,6 +44,10 @@ Dibina untuk **Cortensor Hackathon #5** (November hingga Disember 2026) sebagai 
 - **Bahasa Inggeris dan Melayu.** Baris arahan, ringkasan dan halaman HTML-nya menerima `--lang en|ms`.
 
 ## Cuba tanpa kunci: satu arahan
+
+Untuk melihat dahulu, [halaman demo](https://aimanmalib.github.io/followthrough/ms/) memaparkan digest bagi repositori
+sampel sintetik ([dalam bahasa Inggeris](https://aimanmalib.github.io/followthrough/)), dibina semula dari `main` setiap kali push.
+Untuk menjalankannya sendiri:
 
 ```sh
 demo/run.sh

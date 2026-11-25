@@ -411,6 +411,14 @@ dark desktop view passed, as expected, because neither change touches it. `tests
 (language, counts, self-contained, no thread text, escaping, partial banner, colour tokens, CLI); removing
 the escape of the repository name turns the escaping test red.
 
+### Published page (2026-11-25)
+
+The same English and Malay fixture pages, as published by `.github/workflows/pages.yml` (ADR 0016) at
+`https://aimanmalib.github.io/followthrough/` and `/ms/`, downloaded and checked with `scripts/check_page.py`:
+HTTP 200 on both paths three times 10 s apart; 16/16 passed (2 pages x Chromium 320 and 1280 px, WebKit
+iPhone 13 and 320 px x light and dark): no sideways scroll, no console errors, no low-contrast text.
+GitHub community profile for the repository: 100%.
+
 ## OpenMinion findings (repro)
 
 The three scripts in `repro/`, run on the build host on 2026-11-18 (openminion 0.1.23, Python 3.12,
