@@ -1,11 +1,36 @@
-# Public demo page (ADR 0016): what scripts/build_pages.py adds to the published fixture digests.
-# Page text (description) lives in locales/*.toml under [pages].
+# Public demo site (ADR 0016, ADR 0017): a product landing page plus the published fixture digests.
+# Page text lives in locales/*.toml under [pages] (digest description) and [landing] (the landing page).
 site_url = "https://aimanmalib.github.io/followthrough/"
-# Language -> path under site_url. The first entry is the default page.
+# Language -> path under site_url for the landing page. The first entry is the default page.
 paths = { en = "", ms = "ms/" }
+# Language -> path for the fixture digest pages (body unchanged, see ADR 0017).
+digest_paths = { en = "digest/", ms = "ms/digest/" }
 # Repository files copied next to the pages; social cards and the tab icon point at the copies.
 image = "docs/images/digest-desktop.png"
 image_width = 880
 image_height = 932
 image_alt_key = "pages.image_alt"
 icon = "brand/logo-64.png"
+
+[landing]
+# Template, styles, script, fonts and screenshots of the landing page; copied to assets_out under the site.
+source_dir = "docs/site"
+template = "landing.html"
+assets_out = "assets/"
+copy = ["token.css", "landing.css", "landing.js", "fonts", "shots"]
+logo = "brand/logo.svg"
+repo_url = "https://github.com/aimanmalib/followthrough"
+demo_url = "https://github.com/aimanmalib/followthrough#try-it-without-a-key-one-command"
+# localStorage key that remembers the visitor's light/dark choice.
+theme_storage_key = "followthrough-theme"
+
+# Screenshots in the hero frames (paths under source_dir). `dark` is optional; without it the light image shows in both schemes.
+[landing.shots.browser]
+light = "shots/digest-desktop-light.webp"
+width = 880
+height = 932
+
+[landing.shots.phone]
+light = "shots/digest-phone-dark.webp"
+width = 390
+height = 844

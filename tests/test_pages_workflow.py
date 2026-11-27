@@ -33,3 +33,8 @@ def test_minimal_permissions() -> None:
     text = _text()
     assert "contents: read" in text and "pages: write" in text and "id-token: write" in text
     assert "contents: write" not in text
+
+
+def test_publishes_landing_and_digest_pages() -> None:
+    # Two landing pages and two digest pages (ADR 0017).
+    assert 'find _site -name index.html | wc -l)" = 4' in _text()

@@ -1,4 +1,5 @@
-"""scripts/build_pages.py: the published pages carry preview tags, the icon and image, and an unchanged body."""
+"""scripts/build_pages.py: the landing pages and the digest pages carry preview tags, the icon and image; the digest
+body is unchanged (ADR 0016, ADR 0017)."""
 
 from __future__ import annotations
 
@@ -26,29 +27,43 @@ def runs(tmp_path: Path) -> Path:
     return tmp_path / "runs"
 
 
-def test_builds_one_page_per_language_with_assets(runs: Path, tmp_path: Path) -> None:
+def test_builds_landing_and_digest_pages_with_assets(runs: Path, tmp_path: Path) -> None:
     site = tmp_path / "site"
     cfg = build_pages.load("pages")
     written = build_pages.build(runs, site)
-    assert sorted(p.relative_to(site).as_posix() for p in written) == sorted(
-        f"{path}index.html" for path in cfg["paths"].values())
+    expected = {f"{p}index.html" for p in [*cfg["paths"].values(), *cfg["digest_paths"].values()]}
+    assert len(expected) == 4
+    assert sorted(p.relative_to(site).as_posix() for p in written) == sorted(expected)
     for key in ("image", "icon"):
         assert (site / Path(cfg[key]).name).stat().st_size > 0
     assert (site / ".nojekyll").exists()
 
 
-def test_head_has_preview_tags_and_body_is_unchanged(runs: Path, tmp_path: Path) -> None:
+def test_digest_head_has_preview_tags_and_body_is_unchanged(runs: Path, tmp_path: Path) -> None:
     site = tmp_path / "site"
     build_pages.build(runs, site)
     cfg = build_pages.load("pages")
-    for lang, path in cfg["paths"].items():
+    for lang, path in cfg["digest_paths"].items():
         html = (site / path / "index.html").read_text(encoding="utf-8")
         head, body = html.split("</head>", 1)
         for needle in ('name="description"', 'property="og:title" content="Digest &amp; ' + lang,
                        'property="og:image" content="' + cfg["site_url"], 'name="twitter:card"', 'rel="icon"',
-                       'hreflang="en"', 'hreflang="ms"'):
+                       f'rel="canonical" href="{cfg["site_url"]}{path}"',
+                       *(f'hreflang="{code}" href="{cfg["site_url"]}{p}"' for code, p in cfg["digest_paths"].items())):
             assert needle in head
         assert body == PAGE.format(lang=lang).split("</head>", 1)[1]
+
+
+def test_landing_head_points_at_landing_paths(runs: Path, tmp_path: Path) -> None:
+    site = tmp_path / "site"
+    build_pages.build(runs, site)
+    cfg = build_pages.load("pages")
+    for lang, path in cfg["paths"].items():
+        head = (site / path / "index.html").read_text(encoding="utf-8").split("</head>", 1)[0]
+        assert head.count("</title>") == 1 and head.count('name="description"') == 1
+        assert f'rel="canonical" href="{cfg["site_url"]}{path}"' in head
+        for code, p in cfg["paths"].items():
+            assert f'hreflang="{code}" href="{cfg["site_url"]}{p}"' in head
 
 
 def test_text_is_escaped(runs: Path) -> None:

@@ -1,10 +1,12 @@
-"""Assemble the public demo site from fixture digest pages (ADR 0016).
+"""Assemble the public demo site: a landing page and the fixture digest pages (ADR 0016, ADR 0017).
 
     uv run python scripts/build_pages.py RUNS_DIR SITE_DIR
 
 RUNS_DIR/<lang>/<date>/digest.html comes from `followthrough sweep --fixture --lang <lang> --out RUNS_DIR/<lang>`.
-Each page is copied to SITE_DIR/<path>index.html (paths from config/pages.toml) with a description, social
-preview tags, language alternates and a tab icon added to <head>. The page body is not changed.
+Each digest is copied to SITE_DIR/<digest path>index.html with a description, social preview tags, language
+alternates and a tab icon added to <head>; the page body is not changed. The landing page for each language
+(scripts/build_landing.py) goes to SITE_DIR/<path>index.html, with its assets under the [landing] assets folder.
+Paths come from config/pages.toml.
 """
 
 from __future__ import annotations
@@ -19,13 +21,18 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from followthrough.config import load, t  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "scripts"))
+import build_landing  # noqa: E402
 
-def head_tags(cfg: dict, lang: str, title: str) -> str:
-    """The <head> additions for one language. `title` is the page's own <title> text (already escaped)."""
+
+def head_tags(cfg: dict, lang: str, title: str, paths: dict[str, str] | None = None,
+              description_key: str = "pages.description") -> str:
+    """The <head> additions for one language. `title` is the page's own <title> text (already escaped);
+    `paths` maps each language to its page (default: the landing paths)."""
     site = cfg["site_url"]
-    paths: dict[str, str] = cfg["paths"]
+    paths = paths or cfg["paths"]
     image = site + Path(cfg["image"]).name
-    description = escape(t("pages.description", lang))
+    description = escape(t(description_key, lang))
     rows = [
         f'<meta name="description" content="{description}">',
         f'<link rel="icon" type="image/png" href="{escape(site + Path(cfg["icon"]).name)}">',
@@ -63,16 +70,24 @@ def find_page(runs: Path, lang: str) -> Path:
     return found[0]
 
 
+def write(out: Path, html: str) -> Path:
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+    return out
+
+
 def build(runs: Path, site: Path, root: Path = ROOT) -> list[Path]:
     cfg = load("pages")
     site.mkdir(parents=True, exist_ok=True)
     written = []
-    for lang, path in cfg["paths"].items():
+    for lang, path in cfg["digest_paths"].items():
         html = find_page(runs, lang).read_text(encoding="utf-8")
-        out = site / path / "index.html"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(with_tags(html, head_tags(cfg, lang, page_title(html))), encoding="utf-8")
-        written.append(out)
+        tags = head_tags(cfg, lang, page_title(html), cfg["digest_paths"])
+        written.append(write(site / path / "index.html", with_tags(html, tags)))
+    for lang, path in cfg["paths"].items():
+        tags = head_tags(cfg, lang, escape(t("landing.title", lang)), description_key="landing.description")
+        written.append(write(site / path / "index.html", build_landing.page(cfg, lang, tags, root)))
+    build_landing.copy_assets(cfg, site, root)
     for key in ("image", "icon"):
         shutil.copyfile(root / cfg[key], site / Path(cfg[key]).name)
     (site / ".nojekyll").touch()

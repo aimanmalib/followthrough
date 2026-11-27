@@ -1,5 +1,6 @@
-# Public demo page: the offline fixture sweep (synthetic sample repository, rule reader, fixed clock)
-# rendered as digest.html in English (/) and Malay (/ms/), with preview tags added by scripts/build_pages.py. No secrets, no network beyond the install.
+# Public demo site: a landing page in English (/) and Malay (/ms/) plus the offline fixture sweep (synthetic sample
+# repository, rule reader, fixed clock) rendered as digest.html at /digest/ and /ms/digest/, assembled by
+# scripts/build_pages.py (ADR 0016, ADR 0017). No secrets, no network beyond the install.
 name: pages
 on:
   push:
@@ -31,7 +32,7 @@ jobs:
             uv run --frozen followthrough sweep --fixture --lang "$lang" --out "runs/$lang" >/dev/null
           done
           uv run --frozen python scripts/build_pages.py runs _site
-          test "$(find _site -name index.html | wc -l)" = 2
+          test "$(find _site -name index.html | wc -l)" = 4
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

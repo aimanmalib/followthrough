@@ -1,0 +1,108 @@
+/* Follow-Through landing page (ADR 0017). Colours, fonts, sizes and spacing come only from var(--…) in token.css,
+   which is generated from the shared design tokens. Pixel literals are allowed only for hairlines (1px, 1.5px, 2px). */
+@font-face { font-family: Figtree; font-style: normal; font-weight: 300 900; font-display: swap; src: url("fonts/figtree-latin.woff2") format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/geist-mono-latin.woff2") format("woff2"); }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--latar); color: var(--teks); font-family: var(--fon-paparan); font-size: var(--saiz-telefon-badan);
+  line-height: 1.55; overflow-x: clip; }
+@media (min-width: 900px) { body { font-size: var(--saiz-desktop-badan); } }
+img, video { display: block; max-width: 100%; height: auto; }
+figure { margin: 0; }
+a { color: inherit; text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-color: var(--aksen); }
+::selection { background: var(--aksen); color: var(--aksen-teks); }
+:focus-visible { outline: 2px solid var(--teks); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { margin: 0; line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; font-weight: 750; }
+p { margin: 0; text-wrap: pretty; }
+.wrap { width: min(100% - var(--jarak-unit) * 5, var(--kandungan-maks)); margin-inline: auto; }
+.skip { position: absolute; left: var(--jarak-unit); top: calc(-1 * var(--jarak-unit) * 8); padding: var(--jarak-unit) calc(var(--jarak-unit) * 2);
+  background: var(--aksen); color: var(--aksen-teks); border-radius: var(--jejari); z-index: 2; min-height: calc(var(--jarak-unit) * 5.5);
+  display: inline-flex; align-items: center; }
+.skip:focus { top: var(--jarak-unit); }
+
+/* Masthead: the real logo mark and the name. Not sticky, no glass. */
+.masthead { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--jarak-unit) * 2); padding-block: calc(var(--jarak-unit) * 2); }
+.brand { display: inline-flex; align-items: center; gap: var(--jarak-unit); font-weight: 750; font-size: 1.12em; text-decoration: none;
+  letter-spacing: -0.02em; min-height: calc(var(--jarak-unit) * 5.5); white-space: nowrap; }
+.brand svg, .brand img { width: calc(var(--jarak-unit) * 4.5); height: auto; flex: none; }
+.nav { display: flex; align-items: center; gap: calc(var(--jarak-unit) * 3); font-size: 0.95em; }
+.nav a { text-decoration: none; min-height: calc(var(--jarak-unit) * 5.5); display: inline-flex; align-items: center; white-space: nowrap; }
+.nav a:hover { text-decoration: underline; text-decoration-color: var(--aksen); }
+.nav .narrow { display: none; }
+.lang { font-weight: 650; }
+@media (max-width: 759px) {
+  .nav .wide { display: none; } .nav .narrow { display: inline; } .nav { gap: calc(var(--jarak-unit) * 1.5); }
+  .lang { min-width: calc(var(--jarak-unit) * 5.5); justify-content: center; }
+}
+@media (max-width: 359px) { .brand span { display: none; } }
+.theme-switch { inline-size: calc(var(--jarak-unit) * 5.5); block-size: calc(var(--jarak-unit) * 5.5); display: grid; place-items: center; padding: 0;
+  border-radius: 50%; border: 1px solid var(--sempadan); background: transparent; color: var(--teks); cursor: pointer; flex: none; }
+.theme-switch:hover { border-color: var(--teks); }
+.theme-switch svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Light/dark: the switch icon and the screenshots follow the scheme. A frame without a dark screenshot keeps the light one. */
+.theme-switch .sun, .when-dark { display: none; }
+:root[data-tema="gelap"] .theme-switch .moon, :root[data-tema="gelap"] figure:has(.when-dark) .when-light { display: none; }
+:root[data-tema="gelap"] .theme-switch .sun, :root[data-tema="gelap"] .when-dark { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="terang"]) .theme-switch .moon, :root:not([data-tema="terang"]) figure:has(.when-dark) .when-light { display: none; }
+  :root:not([data-tema="terang"]) .theme-switch .sun, :root:not([data-tema="terang"]) .when-dark { display: block; }
+}
+
+/* Buttons: one primary (filled accent), one secondary (outlined). */
+.actions { display: flex; flex-wrap: wrap; gap: calc(var(--jarak-unit) * 1.5); margin-top: calc(var(--jarak-unit) * 4); }
+.button { display: inline-flex; align-items: center; justify-content: center; min-height: calc(var(--jarak-unit) * 6);
+  padding: 0 calc(var(--jarak-unit) * 3); border-radius: 100vmax; font-weight: 650; text-decoration: none;
+  border: 1.5px solid var(--aksen); background: var(--aksen); color: var(--aksen-teks); transition: transform .2s cubic-bezier(.16, 1, .3, 1); }
+.button:hover { transform: translateY(-1px); }
+.button.secondary { background: transparent; color: var(--teks); border-color: currentColor; }
+
+/* Hero: text on the left, the real digest in a browser and a phone on the right, bleeding to the screen edge on wide screens.
+   The only motion without a user action is the stage entering once. */
+.hero { display: grid; gap: calc(var(--jarak-unit) * 7); padding-block: calc(var(--jarak-unit) * 3) var(--jarak-bahagian); }
+.hero > * { min-width: 0; }
+.hero h1 { font-size: clamp(var(--saiz-telefon-h1) * .62, 6vw, var(--saiz-desktop-h1) * .72); max-width: 15ch; letter-spacing: -0.035em; }
+.lede { margin-top: calc(var(--jarak-unit) * 3); max-width: 44ch; font-size: 1.12em; color: var(--teks-redup); }
+.note { margin-top: calc(var(--jarak-unit) * 3); max-width: 46ch; font-size: .9em; color: var(--teks-redup);
+  padding-top: calc(var(--jarak-unit) * 2); border-top: 1px solid var(--sempadan); }
+.stage { position: relative; padding: 0 0 22% 14%; isolation: isolate; }
+.stage::before { content: ""; position: absolute; inset: 10% calc(-1 * var(--jarak-unit) * 2.5) -4% 6%; z-index: -1; border-radius: calc(var(--jejari) * 2);
+  background: var(--aksen-lembut); }
+.stage .phone { position: absolute; left: 0; bottom: 0; width: 34%; min-width: calc(var(--jarak-unit) * 14); animation: enter .9s .18s cubic-bezier(.16, 1, .3, 1) backwards; }
+.stage .browser { animation: enter .9s cubic-bezier(.16, 1, .3, 1) backwards; }
+@keyframes enter { from { transform: translateY(calc(var(--jarak-unit) * 4)); opacity: .35; } }
+@media (min-width: 960px) {
+  .hero { grid-template-columns: 6fr 6fr; align-items: center; gap: calc(var(--jarak-unit) * 8);
+    padding-block: calc(var(--jarak-unit) * 6) calc(var(--jarak-bahagian) * 1.5); }
+  .stage { margin-right: calc(-1 * max(0px, (100vw - var(--kandungan-maks)) / 2)); }
+  .stage .browser { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .stage::before { right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+}
+
+/* Device frames drawn in CSS (no vendor artwork). The screen is the screenshot itself, not a card inside a card. */
+.phone { position: relative; width: 100%; max-width: calc(var(--jarak-unit) * 38); padding: calc(var(--jarak-unit) * 1.1);
+  border-radius: calc(var(--jarak-unit) * 4); background: var(--bingkai);
+  box-shadow: 0 calc(var(--jarak-unit) * 4) calc(var(--jarak-unit) * 8) calc(var(--jarak-unit) * -2.5) var(--bayang), 0 0 0 1.5px var(--sempadan); }
+.phone > img { width: 100%; border-radius: calc(var(--jarak-unit) * 3); }
+.browser { width: 100%; border-radius: var(--jejari); overflow: hidden; background: var(--kertas);
+  box-shadow: 0 calc(var(--jarak-unit) * 5) calc(var(--jarak-unit) * 10) calc(var(--jarak-unit) * -4) var(--bayang), 0 0 0 1px var(--sempadan); }
+.browser > .bar { display: flex; align-items: center; gap: calc(var(--jarak-unit) * .75); height: calc(var(--jarak-unit) * 4);
+  padding: 0 calc(var(--jarak-unit) * 1.5); background: var(--bar-pelayar); font: var(--saiz-desktop-kecil)/1 var(--fon-mono); color: var(--bingkai); }
+.browser > .bar i { width: calc(var(--jarak-unit) * 1.25); height: calc(var(--jarak-unit) * 1.25); border-radius: 50%; flex: none;
+  background: color-mix(in oklab, var(--bingkai) 25%, var(--bar-pelayar)); }
+.browser > .bar span { min-width: 0; margin-left: calc(var(--jarak-unit) * 1.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.browser > img { max-height: calc(var(--jarak-unit) * 62); width: 100%; object-fit: cover; object-position: top left; }
+
+/* Footer */
+.foot { border-top: 1px solid var(--sempadan); padding-block: calc(var(--jarak-unit) * 5); font-size: .92em; }
+.foot .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: calc(var(--jarak-unit) * 2); }
+.foot .brand img { width: calc(var(--jarak-unit) * 3.5); }
+.foot p { color: var(--teks-redup); max-width: 60ch; }
+.foot .wrap > a:last-child { min-height: calc(var(--jarak-unit) * 5.5); display: inline-flex; align-items: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}

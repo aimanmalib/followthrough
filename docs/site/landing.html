@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="{{@lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{title}}</title>
+<script>try{var t=localStorage.getItem("{{@theme_key}}");if(t==="gelap"||t==="terang")document.documentElement.dataset.tema=t}catch(e){}</script>
+<link rel="preload" href="{{@assets}}fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{@assets}}token.css">
+<link rel="stylesheet" href="{{@assets}}landing.css">
+<!--head-->
+</head>
+<body>
+<a class="skip" href="#main">{{skip}}</a>
+<header class="wrap masthead">
+  <a class="brand" href="{{@home}}"><!--logo--><span>Follow-Through</span></a>
+  <nav class="nav" aria-label="{{nav_label}}">
+    <a class="wide" href="{{@digest}}">{{nav_digest}}</a>
+    <a class="wide" href="{{@repo_url}}">{{nav_code}}</a>
+    <a class="lang" href="{{@other_href}}" hreflang="{{@other_lang}}" lang="{{@other_lang}}" aria-label="{{lang_other}}"><span class="wide">{{lang_other}}</span><span class="narrow" aria-hidden="true">{{lang_short}}</span></a>
+    <button class="theme-switch" type="button" data-label-dark="{{theme_dark}}" data-label-light="{{theme_light}}" data-storage-key="{{@theme_key}}" aria-label="{{theme_dark}}">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/><g class="sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>
+    </button>
+  </nav>
+</header>
+<main id="main">
+  <section class="wrap hero">
+    <div class="hero-text">
+      <h1>{{hero_title}}</h1>
+      <p class="lede">{{hero_lede}}</p>
+      <div class="actions">
+        <a class="button" href="{{@digest}}">{{cta_primary}}</a>
+        <a class="button secondary" href="{{@demo_url}}">{{cta_secondary}}</a>
+      </div>
+      <p class="note">{{hero_note}}</p>
+    </div>
+    <div class="stage">
+      <figure class="browser">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>{{@digest_host}}</span></div>
+        <img class="when-light" src="{{@assets}}{{@browser.light}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="{{alt_browser}}" fetchpriority="high">
+        <!--if @browser.dark-->
+        <img class="when-dark" src="{{@assets}}{{@browser.dark}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="" loading="lazy">
+        <!--/if-->
+      </figure>
+      <figure class="phone">
+        <img class="when-light" src="{{@assets}}{{@phone.light}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="{{alt_phone}}">
+        <!--if @phone.dark-->
+        <img class="when-dark" src="{{@assets}}{{@phone.dark}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="" loading="lazy">
+        <!--/if-->
+      </figure>
+    </div>
+  </section>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <a class="brand" href="{{@home}}"><img src="{{@assets}}logo.svg" alt="" width="28" height="28"><span>Follow-Through</span></a>
+    <p>{{footer_note}}</p>
+    <a href="{{@repo_url}}">{{footer_code}}</a>
+  </div>
+</footer>
+<script src="{{@assets}}landing.js" defer></script>
+</body>
+</html>
