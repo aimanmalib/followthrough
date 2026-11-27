@@ -20,7 +20,16 @@ assets_out = "assets/"
 copy = ["token.css", "landing.css", "landing.js", "fonts", "shots"]
 logo = "brand/logo.svg"
 repo_url = "https://github.com/aimanmalib/followthrough"
-demo_url = "https://github.com/aimanmalib/followthrough#try-it-without-a-key-one-command"
+# The hero's second button goes to the demo section of the same page.
+demo_url = "#demo"
+demo_guide_url = "https://github.com/aimanmalib/followthrough/blob/main/demo/README.md"
+results_url = "https://github.com/aimanmalib/followthrough/blob/main/docs/TEST-RESULTS.md"
+# Demo video link; empty = no video link or player on the page.
+video_url = ""
+# Counts of the English fixture sweep, written next to the English digest; the proof panel loads it (no other network).
+summary_file = "summary.json"
+# Order of the actions in the proof panel; labels come from locales/<lang>.toml [actions].
+actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "READY_TO_VERIFY", "NO_ACTION"]
 # localStorage key that remembers the visitor's light/dark choice.
 theme_storage_key = "followthrough-theme"
 

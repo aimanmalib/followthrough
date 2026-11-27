@@ -16,7 +16,10 @@
 <header class="wrap masthead">
   <a class="brand" href="{{@home}}"><!--logo--><span>Follow-Through</span></a>
   <nav class="nav" aria-label="{{nav_label}}">
-    <a class="wide" href="{{@digest}}">{{nav_digest}}</a>
+    <a class="wide" href="#how">{{nav_how}}</a>
+    <a class="wide" href="#proof">{{nav_proof}}</a>
+    <a class="wide" href="#faq">{{nav_faq}}</a>
+    <a class="wide" href="#demo">{{nav_demo}}</a>
     <a class="wide" href="{{@repo_url}}">{{nav_code}}</a>
     <a class="lang" href="{{@other_href}}" hreflang="{{@other_lang}}" lang="{{@other_lang}}" aria-label="{{lang_other}}"><span class="wide">{{lang_other}}</span><span class="narrow" aria-hidden="true">{{lang_short}}</span></a>
     <button class="theme-switch" type="button" data-label-dark="{{theme_dark}}" data-label-light="{{theme_light}}" data-storage-key="{{@theme_key}}" aria-label="{{theme_dark}}">
@@ -49,6 +52,96 @@
         <img class="when-dark" src="{{@assets}}{{@phone.dark}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="" loading="lazy">
         <!--/if-->
       </figure>
+    </div>
+  </section>
+
+  <section class="wrap band problem" aria-labelledby="problem-title">
+    <div class="problem-text">
+      <h2 id="problem-title">{{problem_title}}</h2>
+      <p>{{problem_text}}</p>
+    </div>
+    <ul class="rules" aria-label="{{problem_rules_label}}">
+      <!--each problem_rules--><li><q>{{.rule}}</q><span class="becomes" data-code="{{.code}}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg><i aria-hidden="true"></i>{{.action}}</span></li><!--/each-->
+    </ul>
+    <p class="problem-close">{{problem_close}}</p>
+  </section>
+
+  <section class="wrap band how" id="how" aria-labelledby="how-title">
+    <header class="band-head">
+      <h2 id="how-title">{{how_title}}</h2>
+      <p>{{how_lede}}</p>
+    </header>
+    <ol class="steps">
+      <!--each how_steps--><li>
+        <h3>{{.title}}</h3>
+        <p>{{.text}}</p>
+        <code>{{.sample}}</code>
+      </li><!--/each-->
+    </ol>
+  </section>
+
+  <section class="wrap band proof" id="proof" aria-labelledby="proof-title">
+    <header class="band-head">
+      <h2 id="proof-title">{{proof_title}}</h2>
+      <p>{{proof_lede}}</p>
+    </header>
+      <div class="sweep" data-hidup="{{@summary}}" aria-live="polite">
+        <h3>{{proof_live_title}}</h3>
+        <p data-keadaan="muat" class="quiet">{{proof_loading}}</p>
+        <p data-keadaan="kosong">{{proof_empty}}</p>
+        <p data-keadaan="ralat">{{proof_error}} <a href="{{@digest}}">{{proof_error_link}}</a></p>
+        <p data-keadaan="ada" class="quiet" data-format="{{proof_as_of}}"></p>
+        <div data-keadaan="ada" class="tally" role="img" aria-label="{{proof_chart_label}}"><!--each actions--><span data-code="{{.code}}"></span><!--/each--></div>
+        <ul data-keadaan="ada" class="legend">
+          <!--each actions--><li data-code="{{.code}}"><i aria-hidden="true"></i><span>{{.label}}</span><b data-count></b></li><!--/each-->
+        </ul>
+        <dl data-keadaan="ada" class="facts">
+          <div><dt>{{proof_quote_label}}</dt><dd data-format="{{proof_quote_value}}"></dd></div>
+          <div><dt>{{proof_cost_label}}</dt><dd data-format="{{proof_cost_value}}"></dd></div>
+          <div><dt>{{proof_unread_label}}</dt><dd data-format="{{proof_unread_value}}"></dd></div>
+        </dl>
+      </div>
+  </section>
+
+  <section class="wrap band results" aria-labelledby="results-title">
+    <header class="band-head">
+      <h2 id="results-title">{{results_title}}</h2>
+      <p>{{results_lede}}</p>
+    </header>
+    <ul class="measured">
+      <!--each proof_measured--><li><strong>{{.lead}}</strong> {{.text}}</li><!--/each-->
+    </ul>
+    <a class="more" href="{{@results_url}}">{{proof_results_link}}</a>
+  </section>
+
+  <section class="wrap band faq" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">{{faq_title}}</h2>
+    <div class="questions">
+      <!--each faq--><details>
+        <summary><span>{{.q}}</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5v14"/></svg></summary>
+        <p>{{.a}}</p>
+      </details><!--/each-->
+    </div>
+  </section>
+
+  <section class="wrap band demo" id="demo" aria-labelledby="demo-title">
+    <div class="demo-text">
+      <h2 id="demo-title">{{demo_title}}</h2>
+      <p>{{demo_lede}}</p>
+      <p class="links"><a href="{{@demo_guide_url}}">{{demo_guide}}</a><!--if @video_url--> <a href="{{@video_url}}">{{demo_video}}</a><!--/if--></p>
+    </div>
+    <div class="terminal">
+      <div class="command">
+        <p id="cmd-demo">{{demo_command_label}}</p>
+        <pre><code>{{demo_command}}</code></pre>
+        <button class="copy" type="button" aria-describedby="cmd-demo" data-copied="{{demo_copied}}">{{demo_copy}}</button>
+      </div>
+      <div class="command">
+        <p id="cmd-alt">{{demo_alt_label}}</p>
+        <pre><code>{{demo_alt_command}}</code></pre>
+        <button class="copy" type="button" aria-describedby="cmd-alt" data-copied="{{demo_copied}}">{{demo_copy}}</button>
+      </div>
+      <p class="aside">{{demo_alt}}</p>
     </div>
   </section>
 </main>

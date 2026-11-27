@@ -84,9 +84,33 @@ def relative(page: str, target: str) -> str:
     return "./" if rel == "." else rel.rstrip("/") + "/"
 
 
-def locale(lang: str, root: Path = ROOT) -> dict[str, Any]:
+def locale(lang: str, root: Path = ROOT, order: list[str] | None = None) -> dict[str, Any]:
+    """The [landing] text for `lang`: the numbered `faq` table (q1/a1, q2/a2, …) as a list in number order, plus
+    `actions`: the digest's own action labels in `order`."""
     with open(root / "locales" / f"{lang}.toml", "rb") as fh:
-        return tomllib.load(fh)["landing"]
+        data = tomllib.load(fh)
+    text = dict(data["landing"])
+    faq = text.get("faq", {})
+    numbers = sorted({int(k[1:]) for k in faq if re.fullmatch(r"q\d+", k)})
+    text["faq"] = [{"q": faq[f"q{n}"], "a": faq[f"a{n}"]} for n in numbers]
+    text["actions"] = [{"code": code, "label": data["actions"][code]} for code in order or []]
+    return text
+
+
+def summary(digest: dict[str, Any], metrics: dict[str, Any], order: list[str]) -> dict[str, Any]:
+    """The proof panel's data, from one fixture sweep's digest.json and metrics.json: counts only, no thread text."""
+    guard = metrics.get("guard") or {}
+    return {
+        "schema": 1,
+        "repo": digest["repo"],
+        "date": digest["as_of"][:10],
+        "threads": digest["threads"],
+        "actions": [{"code": code, "count": int(digest["counts"].get(code, 0))} for code in order],
+        "checked": int(guard.get("checked", 0)),
+        "rejected": int(digest["guard_rejected"]),
+        "read_failed": int(digest["read_failed"]),
+        "usd": f'{float(metrics.get("usd") or 0):.2f}',
+    }
 
 
 def context(cfg: dict[str, Any], lang: str) -> dict[str, Any]:
@@ -105,6 +129,10 @@ def context(cfg: dict[str, Any], lang: str) -> dict[str, Any]:
         "other_href": relative(here, paths[other]),
         "repo_url": land["repo_url"],
         "demo_url": land["demo_url"],
+        "demo_guide_url": land["demo_guide_url"],
+        "results_url": land["results_url"],
+        "video_url": land["video_url"],
+        "summary": relative(here, digests[next(iter(digests))]) + land["summary_file"],
         "theme_key": land["theme_storage_key"],
         "browser": land["shots"]["browser"],
         "phone": land["shots"]["phone"],
@@ -118,7 +146,7 @@ def page(cfg: dict[str, Any], lang: str, head: str, root: Path = ROOT) -> str:
     for marker in ("<!--head-->", "<!--logo-->"):
         if template.count(marker) != 1:
             raise TemplateError(f"template needs exactly one {marker}")
-    html = render(template, locale(lang, root), context(cfg, lang))
+    html = render(template, locale(lang, root, land["actions"]), context(cfg, lang))
     logo = inline_logo((root / land["logo"]).read_text(encoding="utf-8"), 36)
     return html.replace("<!--head-->", head.rstrip("\n"), 1).replace("<!--logo-->", logo, 1)
 

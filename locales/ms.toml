@@ -163,3 +163,120 @@ alt_browser = "Halaman ringkasan untuk repositori contoh sintetik: 2 susulan per
 alt_phone = "Ringkasan yang sama pada iPhone 13 dalam skema gelap."
 footer_note = "Lesen MIT. Dibina untuk Cortensor Hackathon #5. Tidak rasmi: tiada kaitan dengan pasukan OpenMinion atau Cortensor."
 footer_code = "Kod sumber di GitHub"
+nav_how = "Cara ia berfungsi"
+nav_proof = "Bukti"
+nav_faq = "Soalan lazim"
+nav_demo = "Demo"
+how_title = "Dari benang yang berubah kepada komen yang diluluskan manusia."
+how_lede = "Setiap sapuan menjalankan empat langkah yang sama. Model membaca; peraturan memutuskan; manusia menghantar."
+proof_title = "Sapuan contoh di sebalik halaman ini."
+proof_lede = "Panel ini memuatkan ringkasan sapuan contoh yang diterbitkan bersama halaman ini: kiraan yang sama dengan ringkasan penuh, untuk repositori contoh sintetik."
+proof_live_title = "Sapuan contoh"
+proof_as_of = "{threads} benang dalam repositori contoh sintetik, setakat {date}."
+proof_loading = "Memuatkan sapuan contoh."
+proof_empty = "Tiada sesiapa sedang menunggu sesiapa sekarang."
+proof_error = "Ringkasan contoh tidak dapat dimuatkan. Ringkasan penuh masih menyenaraikan setiap benang."
+proof_error_link = "Buka ringkasan"
+proof_chart_label = "Benang mengikut tindakan"
+proof_quote_label = "Semakan petikan"
+proof_quote_value = "{rejected} daripada {checked} ditolak"
+proof_cost_label = "Kos model"
+proof_cost_value = "USD {usd}"
+proof_unread_label = "Benang tidak dibaca"
+proof_unread_value = "{read_failed}"
+proof_results_link = "Baca setiap angka dan setiap kegagalan dalam keputusan ujian"
+faq_title = "Soalan pertama penyelenggara"
+demo_title = "Jalankan sendiri dengan satu arahan."
+demo_lede = "Hanya perlukan Docker. Ia menjalankan saluran sebenar pada repositori contoh sintetik: satu subagen pembaca bagi setiap benang, semakan petikan, peraturan dan pendraf. Setiap jawapan model dimainkan semula daripada rakaman; bekas tiada rangkaian dan tiada kunci."
+demo_command_label = "Demo tanpa kunci"
+demo_command = "demo/run.sh"
+demo_copy = "Salin"
+demo_copied = "Disalin"
+demo_alt = "Tanpa Docker, contoh yang sama berjalan atas bacaan tersimpan tanpa model langsung."
+demo_alt_label = "Tanpa Docker"
+demo_alt_command = "uv sync && uv run followthrough sweep --fixture --lang ms"
+demo_guide = "Baca panduan demo"
+problem_title = "Repositori sibuk menulis peraturan susulan, kemudian menjejakinya dengan tangan."
+problem_text = "Repositori OpenMinion membuka 188 isu dan 318 permintaan tarik dalam 31 hari hingga 17 November 2026, dan mempunyai 107 item terbuka pada 18 November. Panduan CONTRIBUTING-nya sudah menyatakan bila perlu membuat susulan."
+problem_close = "Follow-Through menukar ayat-ayat itu kepada tindakan bertarikh, dan setiap tarikh yang dipaparkan boleh dijejak kembali kepada komen sebenar."
+problem_rules_label = "Peraturan CONTRIBUTING dan tindakan yang terhasil"
+results_title = "Diukur pada repositori sebenar, termasuk kegagalan."
+results_lede = "Disalin daripada keputusan ujian: suite tanpa rangkaian, demo kotak pasir dan sapuan langsung baca-sahaja pada openminion/openminion."
+demo_video = "Tonton video demo"
+
+[[landing.how_steps]]
+title = "Baca benang yang berubah"
+text = "Satu subagen OpenMinion bagi setiap benang isu yang berubah menentukan siapa menunggu siapa: penyelenggara, penyumbang, keluaran, tiada sesiapa, atau tidak jelas."
+sample = "6 benang terbuka dibaca"
+
+[[landing.how_steps]]
+title = "Semak setiap petikan"
+text = "Setiap tarikh yang dipakai model mesti datang bersama petikan yang wujud kata demi kata dalam komen sebenar, bertarikh masa komen itu sendiri. Jika tidak, bacaan ditolak dan dikira."
+sample = "Semakan petikan: 0 daripada 6 ditolak"
+
+[[landing.how_steps]]
+title = "Jalankan peraturan anda"
+text = "Peraturan berketentuan dengan jam yang boleh ditetapkan menukar bacaan kepada lima tindakan: susulan perlu dihantar, boleh diambil alih, menunggu jawapan penyelenggara, sedia untuk disahkan, tiada tindakan."
+sample = "#101 Susulan perlu dihantar, permintaan penyelenggara tidak dijawab sejak 2026-11-02"
+
+[[landing.how_steps]]
+title = "Draf, kemudian tanya manusia"
+text = "Draf paling banyak 120 patah perkataan memetik langkah CONTRIBUTING dan setiap tarikh yang dikira. Tiada apa dipos sehingga manusia menjawab allow_once, dan lejar menahan peringatan kedua sehingga benang berubah."
+sample = "allow_once atau deny"
+
+[[landing.proof_measured]]
+lead = "282 ujian lulus tanpa rangkaian."
+text = "Dalam CI awam tanpa kunci dan tanpa rangkaian. CI juga menjalankan sapuan fixture dalam kedua-dua bahasa dan demo Docker tanpa kunci."
+
+[[landing.proof_measured]]
+lead = "deny tidak mengepos apa-apa."
+text = "Dalam demo kotak pasir, allow_once mengepos tepat 1 komen, sama bait demi bait dengan draf tersimpan, dan fail henti menamatkan larian sebelum sebarang permintaan."
+
+[[landing.proof_measured]]
+lead = "Sapuan kedua yang senyap membuat 0 draf."
+text = "Tanpa perubahan, lejar peringatan menahan setiap draf; satu benang yang berubah membuat tepat 1."
+
+[[landing.proof_measured]]
+lead = "Hanya permintaan GET pada openminion/openminion."
+text = "0 tulisan dalam setiap sapuan langsung baca-sahaja, setiap satu di bawah USD 1.00. Larian terakhir membaca 32 daripada 134 benang terbuka sebelum had masanya."
+
+[[landing.proof_measured]]
+lead = "Semakan petikan menolak 22 daripada 41 bacaan baharu."
+text = "Hampir semuanya kerana model memberi masa susulan yang tidak sepadan dengan mana-mana pos penyelenggara. Benang itu ditanda tidak jelas, bukan diteka."
+
+[[landing.problem_rules]]
+rule = "Buat susulan selepas 7 hari kalendar tanpa jawapan."
+code = "FOLLOW_UP_DUE"
+action = "Susulan perlu dihantar"
+
+[[landing.problem_rules]]
+rule = "Minta kemas kini apabila tarikh yang dipersetujui terlepas."
+code = "FOLLOW_UP_DUE"
+action = "Susulan perlu dihantar"
+
+[[landing.problem_rules]]
+rule = "Beri 3 hari kalendar selepas susulan sebelum mengambil alih kerja."
+code = "TAKEOVER_ALLOWED"
+action = "Boleh diambil alih"
+
+[[landing.problem_rules]]
+rule = "Biarkan isu yang dibaiki terbuka dengan status:awaiting-release sehingga pembaikan disemak dalam keluaran."
+code = "READY_TO_VERIFY"
+action = "Sedia untuk disahkan"
+
+[landing.faq]
+# Numbered pairs: q1 + a1, q2 + a2, … shown in number order. Answers repeat facts from the README and the test results.
+q1 = "Adakah ia pernah mengepos komen sendiri?"
+a1 = "Tidak. Satu-satunya laluan tulis menyemak fail henti dahulu, kemudian senarai benar, kemudian meminta manusia menjawab allow_once atau deny. Tiada jawapan bermakna tiada pos. Senarai benar yang disertakan hanya memegang repositori kotak pasir projek ini sendiri."
+q2 = "Apa yang dibacanya, dan bagaimana?"
+a2 = "Data GitHub awam, dengan permintaan GET sahaja. Ia membaca benang isu yang berubah sejak sapuan lepas dan peraturan susulan CONTRIBUTING repositori itu."
+q3 = "Bagaimana ia mengelak tarikh rekaan?"
+a3 = "Setiap tarikh yang dipakai model datang bersama petikan. Petikan itu mesti wujud kata demi kata dalam satu komen sebenar, dan tarikh itu mesti masa komen tersebut. Jika tidak, bacaan ditolak, benang ditanda tidak jelas, dan penolakan dikira."
+q4 = "Adakah ia mengingatkan benang yang sama dua kali?"
+a4 = "Tidak selagi tiada perubahan. Lejar yang dikunci pada keadaan setiap benang (masa kemas kini, bilangan komen, label) menahan draf kedua sehingga sesuatu berubah atau entri itu tamat tempoh."
+q5 = "Berapa kos satu sapuan?"
+a5 = "Perbelanjaan dihadkan pada USD 1.00 setiap sapuan dan USD 20.00 keseluruhan, ditetapkan dalam config/budget.toml; sapuan yang akan melepasi mana-mana had berhenti dengan mesej. Contoh di halaman ini dibuat daripada bacaan tersimpan, tanpa model langsung."
+q6 = "Sejauh mana ia sepadan dengan label repositori itu sendiri?"
+a6 = "Belum baik. Persetujuan dengan label status OpenMinion ialah 0.171 dan 0.204 selepas semakan petikan dalam dua larian ujian, berbanding sasaran 0.80, dan tiada sapuan langsung membaca setiap benang terbuka dalam 20 minit. Kedua-duanya disenaraikan dalam keputusan ujian."
+q7 = "Adakah ini projek rasmi OpenMinion atau Cortensor?"
+a7 = "Tidak. Ia penyertaan tidak rasmi untuk Cortensor Hackathon #5, tiada kaitan dengan, tidak disokong dan tidak diiktiraf oleh pasukan OpenMinion atau Cortensor."

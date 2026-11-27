@@ -95,6 +95,124 @@ p { margin: 0; text-wrap: pretty; }
 .browser > .bar span { min-width: 0; margin-left: calc(var(--jarak-unit) * 1.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .browser > img { max-height: calc(var(--jarak-unit) * 62); width: 100%; object-fit: cover; object-position: top left; }
 
+/* Sections after the hero: a hairline above each, a heading that states the point, then the content. */
+.band { padding-block: var(--jarak-bahagian); border-top: 1px solid var(--sempadan); scroll-margin-top: calc(var(--jarak-unit) * 2); }
+.band > * { min-width: 0; }
+.band h2 { font-size: clamp(var(--saiz-telefon-h2), 3.4vw, var(--saiz-desktop-h2) * 1.25); max-width: 22ch; }
+.band h3 { font-size: var(--saiz-telefon-h3); line-height: 1.2; letter-spacing: -0.02em; font-weight: 700; }
+.band-head { display: grid; gap: calc(var(--jarak-unit) * 2); margin-bottom: calc(var(--jarak-unit) * 6); }
+.band-head p { max-width: 60ch; color: var(--teks-redup); font-size: 1.06em; }
+@media (min-width: 960px) {
+  .band { padding-block: calc(var(--jarak-bahagian) * 1.5); }
+  .band-head { grid-template-columns: 7fr 5fr; align-items: end; gap: calc(var(--jarak-unit) * 8); }
+}
+.quiet { color: var(--teks-redup); }
+
+/* The problem: the repository's own CONTRIBUTING sentences, each with the action Follow-Through turns it into. */
+.problem { display: grid; gap: calc(var(--jarak-unit) * 4); }
+.problem > * { min-width: 0; }
+.problem-text p { margin-top: calc(var(--jarak-unit) * 2.5); max-width: 56ch; color: var(--teks-redup); font-size: 1.06em; }
+.rules { list-style: none; margin: 0; padding: 0; }
+.rules li { display: grid; gap: var(--jarak-unit); padding-block: calc(var(--jarak-unit) * 2.25); border-top: 1px solid var(--sempadan); }
+.rules li:last-child { border-bottom: 1px solid var(--sempadan); }
+.rules q { font-size: 1.12em; font-weight: 600; letter-spacing: -0.01em; max-width: 48ch; }
+.becomes { display: inline-flex; align-items: center; gap: var(--jarak-unit); font: var(--saiz-desktop-kecil)/1.3 var(--fon-mono); color: var(--teks-redup); }
+.becomes svg { flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.problem-close { max-width: 56ch; font-weight: 600; }
+@media (min-width: 960px) {
+  .problem { grid-template-columns: 5fr 7fr; gap: calc(var(--jarak-unit) * 4) calc(var(--jarak-unit) * 8); align-items: start; }
+  .problem-close { grid-column: 2; }
+  .rules li { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: calc(var(--jarak-unit) * 4); }
+}
+
+/* How it works: a real sequence, drawn as one timeline (dots on a line), not as cards. The last dot, the person, is the accent. */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(var(--jarak-unit) * 5); }
+.steps > li { position: relative; min-width: 0; padding-left: calc(var(--jarak-unit) * 4); }
+.steps > li::before { content: ""; position: absolute; left: 0; top: .45em; width: calc(var(--jarak-unit) * 1.5); height: calc(var(--jarak-unit) * 1.5);
+  border-radius: 50%; background: var(--latar); border: 2px solid var(--teks); }
+.steps > li::after { content: ""; position: absolute; left: calc(var(--jarak-unit) * .75 - .5px); top: calc(.45em + var(--jarak-unit) * 1.5);
+  bottom: calc(-1 * var(--jarak-unit) * 5); width: 1px; background: color-mix(in oklab, var(--teks) 28%, var(--latar)); }
+.steps > li:last-child::after { display: none; }
+.steps > li:last-child::before { background: var(--aksen); border-color: var(--aksen); }
+.steps p { margin-top: calc(var(--jarak-unit) * 1.5); color: var(--teks-redup); max-width: 46ch; }
+.steps code { display: inline-block; margin-top: calc(var(--jarak-unit) * 2); padding: calc(var(--jarak-unit) * .75) calc(var(--jarak-unit) * 1.25);
+  border-radius: calc(var(--jejari) / 2); background: var(--aksen-lembut); font: var(--saiz-desktop-kecil)/1.45 var(--fon-mono); max-width: 100%;
+  overflow-wrap: anywhere; }
+@media (min-width: 900px) {
+  .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(var(--jarak-unit) * 4); }
+  .steps > li { padding: calc(var(--jarak-unit) * 4) 0 0; }
+  .steps > li::before { top: calc(-1 * var(--jarak-unit) * .75); }
+  .steps > li::after { left: calc(var(--jarak-unit) * 1.5); right: calc(-1 * var(--jarak-unit) * 4); top: 0; bottom: auto; width: auto; height: 1px; }
+}
+
+/* Proof: the live panel loads digest/summary.json (state muat | ada | kosong | ralat, ?keadaan= forces one). */
+[data-hidup] [data-keadaan] { display: none; }
+[data-hidup][data-status="muat"] [data-keadaan="muat"], [data-hidup][data-status="ada"] [data-keadaan="ada"],
+[data-hidup][data-status="kosong"] [data-keadaan="kosong"], [data-hidup][data-status="ralat"] [data-keadaan="ralat"] { display: revert; }
+[data-hidup][data-status="ada"] .tally[data-keadaan] { display: flex; }
+[data-hidup][data-status="ada"] .facts[data-keadaan] { display: grid; }
+.proof { display: grid; gap: calc(var(--jarak-unit) * 5); }
+.proof .band-head { margin: 0; grid-template-columns: none; align-items: start; gap: calc(var(--jarak-unit) * 2); }
+@media (min-width: 960px) { .proof { grid-template-columns: 5fr 7fr; gap: calc(var(--jarak-unit) * 8); align-items: start; } }
+.sweep { border: 1px solid var(--sempadan); border-radius: var(--jejari); padding: calc(var(--jarak-unit) * 3); display: grid; gap: calc(var(--jarak-unit) * 2); }
+@media (min-width: 600px) { .sweep { padding: calc(var(--jarak-unit) * 4); } }
+.sweep > * { min-width: 0; }
+.tally { height: calc(var(--jarak-unit) * 3); gap: 2px; border-radius: 100vmax; overflow: hidden; margin-top: var(--jarak-unit); }
+.tally > span { flex: var(--n, 0) 1 0; min-width: 0; }
+/* One colour per action, shared by the bar, its legend and the rules list: the accent marks what needs doing now. */
+[data-code="FOLLOW_UP_DUE"] > i, .tally > [data-code="FOLLOW_UP_DUE"] { background: var(--aksen); }
+[data-code="TAKEOVER_ALLOWED"] > i, .tally > [data-code="TAKEOVER_ALLOWED"] { background: var(--teks); }
+[data-code="MAINTAINER_REPLY_PENDING"] > i, .tally > [data-code="MAINTAINER_REPLY_PENDING"] { background: color-mix(in oklab, var(--teks) 62%, var(--latar)); }
+[data-code="READY_TO_VERIFY"] > i, .tally > [data-code="READY_TO_VERIFY"] { background: color-mix(in oklab, var(--teks) 38%, var(--latar)); }
+[data-code="NO_ACTION"] > i, .tally > [data-code="NO_ACTION"] { background: color-mix(in oklab, var(--teks) 16%, var(--latar)); }
+.legend { list-style: none; margin: 0; padding: 0; }
+.legend li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: calc(var(--jarak-unit) * 1.5);
+  padding-block: calc(var(--jarak-unit) * 1.25); border-bottom: 1px solid var(--sempadan); }
+.legend i, .becomes i { width: calc(var(--jarak-unit) * 1.5); height: calc(var(--jarak-unit) * 1.5); border-radius: 3px; }
+.legend b { font: 600 1.35em/1 var(--fon-mono); font-variant-numeric: tabular-nums; }
+.facts { display: grid; gap: calc(var(--jarak-unit) * 2); margin: var(--jarak-unit) 0 0; }
+@media (min-width: 420px) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.facts dt { font-size: .86em; color: var(--teks-redup); }
+.facts dd { margin: calc(var(--jarak-unit) * .5) 0 0; font-family: var(--fon-mono); font-variant-numeric: tabular-nums; }
+.measured { list-style: none; margin: 0; padding: 0; display: grid; gap: 0 calc(var(--jarak-unit) * 5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--jarak-unit) * 36)), 1fr)); }
+.measured li { padding-block: calc(var(--jarak-unit) * 2.5); border-top: 1px solid var(--sempadan); color: var(--teks-redup); min-width: 0; }
+.measured strong { display: block; color: var(--teks); font-size: 1.18em; letter-spacing: -0.015em; font-weight: 700;
+  margin-bottom: calc(var(--jarak-unit) * .5); }
+.more { display: inline-flex; align-items: center; min-height: calc(var(--jarak-unit) * 5.5); margin-top: calc(var(--jarak-unit) * 2); font-weight: 650; }
+
+/* FAQ: native disclosure; the plus turns into a cross when open (motion follows the reader's action). */
+.faq { display: grid; gap: calc(var(--jarak-unit) * 5); }
+@media (min-width: 960px) { .faq { grid-template-columns: 5fr 7fr; gap: calc(var(--jarak-unit) * 8); align-items: start; } }
+.questions details { border-bottom: 1px solid var(--sempadan); }
+.questions details:first-child { border-top: 1px solid var(--sempadan); }
+.questions summary { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--jarak-unit) * 3); cursor: pointer;
+  list-style: none; min-height: calc(var(--jarak-unit) * 7); padding-block: calc(var(--jarak-unit) * 1.5); font-weight: 650; font-size: 1.08em; }
+.questions summary::-webkit-details-marker { display: none; }
+.questions summary > span { min-width: 0; }
+.questions summary:hover > span { text-decoration: underline; text-decoration-color: var(--aksen); text-underline-offset: .22em; }
+.questions summary svg { flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; transition: transform .25s cubic-bezier(.16, 1, .3, 1); }
+.questions details[open] summary svg { transform: rotate(45deg); }
+.questions details p { padding-bottom: calc(var(--jarak-unit) * 3); max-width: 65ch; color: var(--teks-redup); }
+
+/* Demo: the command in a dark terminal block in both schemes, with a copy button. */
+.demo { display: grid; gap: calc(var(--jarak-unit) * 5); }
+@media (min-width: 960px) { .demo { grid-template-columns: 5fr 7fr; gap: calc(var(--jarak-unit) * 8); align-items: center; } }
+.demo-text p { margin-top: calc(var(--jarak-unit) * 2.5); max-width: 56ch; color: var(--teks-redup); }
+.demo-text .links { display: flex; flex-wrap: wrap; gap: 0 calc(var(--jarak-unit) * 3); margin-top: calc(var(--jarak-unit) * 2); color: var(--teks); }
+.demo-text .links a { min-height: calc(var(--jarak-unit) * 5.5); display: inline-flex; align-items: center; font-weight: 650; }
+.terminal { background: var(--bingkai); color: var(--kertas); border: 1px solid var(--sempadan); border-radius: var(--jejari);
+  padding: calc(var(--jarak-unit) * 3); display: grid; gap: calc(var(--jarak-unit) * 3); min-width: 0;
+  box-shadow: 0 calc(var(--jarak-unit) * 3) calc(var(--jarak-unit) * 6) calc(var(--jarak-unit) * -3) var(--bayang); }
+.command { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--jarak-unit) calc(var(--jarak-unit) * 2); }
+.command > p, .terminal .aside { grid-column: 1 / -1; font-size: .86em; color: color-mix(in oklab, var(--kertas) 74%, var(--bingkai)); }
+.command pre { margin: 0; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 1em/1.5 var(--fon-mono); }
+.command pre code::before { content: "$ "; color: var(--aksen); }
+.copy { min-height: calc(var(--jarak-unit) * 5.5); padding: 0 calc(var(--jarak-unit) * 2); border-radius: 100vmax; cursor: pointer; font: inherit;
+  font-size: .9em; font-weight: 650; background: transparent; color: var(--kertas); border: 1px solid color-mix(in oklab, var(--kertas) 45%, var(--bingkai)); }
+.copy:hover { border-color: var(--kertas); }
+.terminal :focus-visible { outline-color: var(--kertas); }
+
 /* Footer */
 .foot { border-top: 1px solid var(--sempadan); padding-block: calc(var(--jarak-unit) * 5); font-size: .92em; }
 .foot .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: calc(var(--jarak-unit) * 2); }

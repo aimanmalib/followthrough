@@ -4,6 +4,7 @@ the generated tokens, and every local link resolves in the built site."""
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 import tomllib
 from html.parser import HTMLParser
@@ -26,6 +27,9 @@ def _module(name: str):
 
 build_pages = _module("build_pages")
 build_landing = build_pages.build_landing
+DIGEST_JSON = {"schema": 1, "repo": "o/sandbox", "as_of": "2026-11-20T09:00:00Z", "threads": 6, "guard_rejected": 1, "read_failed": 0,
+               "counts": {"FOLLOW_UP_DUE": 2, "TAKEOVER_ALLOWED": 1, "READY_TO_VERIFY": 2, "NO_ACTION": 1}, "items": [{"number": 1}]}
+METRICS_JSON = {"schema": 1, "guard": {"checked": 6, "rejected": 1}, "usd": 0.0}
 PAGE = '<!doctype html>\n<html lang="{lang}">\n<head>\n<title>Digest {lang}</title>\n</head>\n<body><p>{lang}</p></body>\n</html>\n'
 
 
@@ -50,6 +54,8 @@ def site(tmp_path_factory: pytest.TempPathFactory) -> Path:
         folder = base / "runs" / lang / "2026-11-20"
         folder.mkdir(parents=True)
         (folder / "digest.html").write_text(PAGE.format(lang=lang), encoding="utf-8")
+        (folder / "digest.json").write_text(json.dumps(DIGEST_JSON), encoding="utf-8")
+        (folder / "metrics.json").write_text(json.dumps(METRICS_JSON), encoding="utf-8")
     build_pages.build(base / "runs", base / "site")
     return base / "site"
 
@@ -164,3 +170,78 @@ def test_no_blur_glass_or_shouting_labels() -> None:
 def test_landing_locale_keys_match() -> None:
     keys = [set(tomllib.loads((ROOT / "locales" / f"{lang}.toml").read_text(encoding="utf-8"))["landing"]) for lang in ("en", "ms")]
     assert keys[0] == keys[1]
+
+
+# --- sections, proof panel, FAQ, demo (R2) ----------------------------------------------------------------------------
+
+def _landing(site: Path, lang: str) -> tuple[str, _Links]:
+    html = (site / _cfg()["paths"][lang] / "index.html").read_text(encoding="utf-8")
+    parser = _Links()
+    parser.feed(html)
+    return html, parser
+
+
+@pytest.mark.parametrize("lang", ["en", "ms"])
+def test_landing_has_six_headed_sections_and_every_anchor_lands(site: Path, lang: str) -> None:
+    html, parser = _landing(site, lang)
+    assert sum(1 for tag, _ in parser.tags if tag == "h2") >= 6
+    assert sum(1 for tag, _ in parser.tags if tag == "section") >= 6
+    ids = {a["id"] for _, a in parser.tags if a.get("id")}
+    anchors = {ref[1:] for ref in parser.refs if ref.startswith("#")}
+    assert {"how", "proof", "faq", "demo"} <= anchors <= ids
+
+
+@pytest.mark.parametrize("lang", ["en", "ms"])
+def test_faq_and_lists_come_from_the_locale_in_both_languages(site: Path, lang: str) -> None:
+    html, parser = _landing(site, lang)
+    text = build_landing.locale(lang)
+    assert len(text["faq"]) >= 5
+    assert sum(1 for tag, _ in parser.tags if tag == "details") == len(text["faq"])
+    for key, fields in (("faq", ("q", "a")), ("how_steps", ("title", "text")), ("proof_measured", ("lead", "text")),
+                        ("problem_rules", ("rule", "action"))):
+        for item in text[key]:
+            for field in fields:
+                assert build_landing.escape(item[field]) in html, (key, field)
+
+
+def test_locale_lists_have_the_same_length_in_both_languages() -> None:
+    en, ms = build_landing.locale("en"), build_landing.locale("ms")
+    for key, value in en.items():
+        if isinstance(value, list):
+            assert len(value) == len(ms[key]), key
+            assert [sorted(item) for item in value] == [sorted(item) for item in ms[key]], key
+    known = set(_cfg()["landing"]["actions"])
+    assert {rule["code"] for rule in en["problem_rules"]} <= known
+
+
+@pytest.mark.parametrize("lang", ["en", "ms"])
+def test_proof_panel_loads_the_published_summary(site: Path, lang: str) -> None:
+    cfg = _cfg()
+    _, parser = _landing(site, lang)
+    slots = [a["data-hidup"] for _, a in parser.tags if "data-hidup" in a]
+    assert len(slots) == 1
+    local = urljoin("https://site.test/" + cfg["paths"][lang], slots[0]).removeprefix("https://site.test/")
+    data = json.loads((site / local).read_text(encoding="utf-8"))
+    codes = [a["data-code"] for tag, a in parser.tags if tag == "span" and "data-code" in a and a.get("class") is None]
+    assert codes == cfg["landing"]["actions"] == [row["code"] for row in data["actions"]]
+    states = {a["data-keadaan"] for _, a in parser.tags if "data-keadaan" in a}
+    assert states == {"muat", "ada", "kosong", "ralat"}
+
+
+def test_summary_holds_the_digest_counts_in_config_order_and_no_thread_text() -> None:
+    order = _cfg()["landing"]["actions"]
+    data = build_landing.summary(DIGEST_JSON, METRICS_JSON, order)
+    assert [row["code"] for row in data["actions"]] == order
+    assert {row["code"]: row["count"] for row in data["actions"] if row["count"]} == DIGEST_JSON["counts"]
+    assert sum(row["count"] for row in data["actions"]) == DIGEST_JSON["threads"]
+    assert (data["checked"], data["rejected"], data["read_failed"], data["usd"]) == (6, 1, 0, "0.00")
+    assert data["date"] == "2026-11-20" and "items" not in data
+
+
+def test_demo_section_links_and_video_only_when_set(site: Path) -> None:
+    cfg = _cfg()["landing"]
+    html, parser = _landing(site, "en")
+    hrefs = set(parser.refs)
+    assert cfg["demo_url"] in hrefs and cfg["demo_guide_url"] in hrefs and cfg["results_url"] in hrefs
+    assert bool("<video" in html or (cfg["video_url"] and cfg["video_url"] in hrefs)) == bool(cfg["video_url"])
+    assert build_landing.escape(build_landing.locale("en")["demo_command"]) in html

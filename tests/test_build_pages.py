@@ -4,6 +4,7 @@ body is unchanged (ADR 0016, ADR 0017)."""
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,9 @@ assert SPEC and SPEC.loader
 build_pages = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(build_pages)
 
+DIGEST_JSON = {"schema": 1, "repo": "o/sandbox", "as_of": "2026-11-20T09:00:00Z", "threads": 6, "guard_rejected": 1, "read_failed": 0,
+               "counts": {"FOLLOW_UP_DUE": 2, "TAKEOVER_ALLOWED": 1, "READY_TO_VERIFY": 2, "NO_ACTION": 1}, "items": [{"number": 1}]}
+METRICS_JSON = {"schema": 1, "guard": {"checked": 6, "rejected": 1}, "usd": 0.0}
 PAGE = ('<!doctype html>\n<html lang="{lang}">\n<head>\n<title>Digest &amp; {lang}</title>\n</head>\n'
         '<body><p>body {lang}</p></body>\n</html>\n')
 
@@ -24,6 +28,8 @@ def runs(tmp_path: Path) -> Path:
         folder = tmp_path / "runs" / lang / "2026-11-20"
         folder.mkdir(parents=True)
         (folder / "digest.html").write_text(PAGE.format(lang=lang), encoding="utf-8")
+        (folder / "digest.json").write_text(json.dumps(DIGEST_JSON), encoding="utf-8")
+        (folder / "metrics.json").write_text(json.dumps(METRICS_JSON), encoding="utf-8")
     return tmp_path / "runs"
 
 
@@ -33,10 +39,17 @@ def test_builds_landing_and_digest_pages_with_assets(runs: Path, tmp_path: Path)
     written = build_pages.build(runs, site)
     expected = {f"{p}index.html" for p in [*cfg["paths"].values(), *cfg["digest_paths"].values()]}
     assert len(expected) == 4
-    assert sorted(p.relative_to(site).as_posix() for p in written) == sorted(expected)
+    summary = next(iter(cfg["digest_paths"].values())) + cfg["landing"]["summary_file"]
+    assert sorted(p.relative_to(site).as_posix() for p in written) == sorted(expected | {summary})
     for key in ("image", "icon"):
         assert (site / Path(cfg[key]).name).stat().st_size > 0
     assert (site / ".nojekyll").exists()
+
+
+def test_summary_needs_the_sweep_json(runs: Path, tmp_path: Path) -> None:
+    (next((runs / "en").glob("*")) / "metrics.json").unlink()
+    with pytest.raises(FileNotFoundError):
+        build_pages.build(runs, tmp_path / "site")
 
 
 def test_digest_head_has_preview_tags_and_body_is_unchanged(runs: Path, tmp_path: Path) -> None:

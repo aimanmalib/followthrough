@@ -5,12 +5,14 @@
 RUNS_DIR/<lang>/<date>/digest.html comes from `followthrough sweep --fixture --lang <lang> --out RUNS_DIR/<lang>`.
 Each digest is copied to SITE_DIR/<digest path>index.html with a description, social preview tags, language
 alternates and a tab icon added to <head>; the page body is not changed. The landing page for each language
-(scripts/build_landing.py) goes to SITE_DIR/<path>index.html, with its assets under the [landing] assets folder.
+(scripts/build_landing.py) goes to SITE_DIR/<path>index.html, with its assets under the [landing] assets folder, and the
+first language's digest.json + metrics.json become the proof panel's summary.json next to that digest.
 Paths come from config/pages.toml.
 """
 
 from __future__ import annotations
 
+import json
 import shutil
 import sys
 from html import escape
@@ -76,14 +78,24 @@ def write(out: Path, html: str) -> Path:
     return out
 
 
+def write_summary(cfg: dict, run: Path, folder: Path) -> Path:
+    """The proof panel's counts (scripts/build_landing.summary) from one run folder's digest.json and metrics.json."""
+    digest, metrics = (json.loads((run / name).read_text(encoding="utf-8")) for name in ("digest.json", "metrics.json"))
+    data = build_landing.summary(digest, metrics, cfg["landing"]["actions"])
+    return write(folder / cfg["landing"]["summary_file"], json.dumps(data, indent=1) + "\n")
+
+
 def build(runs: Path, site: Path, root: Path = ROOT) -> list[Path]:
     cfg = load("pages")
     site.mkdir(parents=True, exist_ok=True)
     written = []
     for lang, path in cfg["digest_paths"].items():
-        html = find_page(runs, lang).read_text(encoding="utf-8")
+        found = find_page(runs, lang)
+        html = found.read_text(encoding="utf-8")
         tags = head_tags(cfg, lang, page_title(html), cfg["digest_paths"])
         written.append(write(site / path / "index.html", with_tags(html, tags)))
+    first = next(iter(cfg["digest_paths"]))
+    written.append(write_summary(cfg, find_page(runs, first).parent, site / cfg["digest_paths"][first]))
     for lang, path in cfg["paths"].items():
         tags = head_tags(cfg, lang, escape(t("landing.title", lang)), description_key="landing.description")
         written.append(write(site / path / "index.html", build_landing.page(cfg, lang, tags, root)))

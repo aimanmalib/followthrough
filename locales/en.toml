@@ -163,3 +163,120 @@ alt_browser = "The digest page for the synthetic sample repository: 2 follow-ups
 alt_phone = "The same digest on an iPhone 13 in the dark scheme."
 footer_note = "MIT licence. Built for Cortensor Hackathon #5. Unofficial: not affiliated with the OpenMinion or Cortensor teams."
 footer_code = "Source on GitHub"
+nav_how = "How it works"
+nav_proof = "Proof"
+nav_faq = "FAQ"
+nav_demo = "Demo"
+how_title = "From a changed thread to a comment a person approved."
+how_lede = "Every sweep runs the same four steps. The model reads; the rules decide; a person sends."
+proof_title = "The sample sweep behind this page."
+proof_lede = "The panel loads the summary of the sample sweep published with this page: the same counts as the full digest, for the synthetic sample repository."
+proof_live_title = "Sample sweep"
+proof_as_of = "{threads} threads in the synthetic sample repository, as of {date}."
+proof_loading = "Loading the sample sweep."
+proof_empty = "Nobody is waiting on anybody right now."
+proof_error = "The sample summary did not load. The full digest still lists every thread."
+proof_error_link = "Open the digest"
+proof_chart_label = "Threads by action"
+proof_quote_label = "Quote check"
+proof_quote_value = "{rejected} of {checked} rejected"
+proof_cost_label = "Model cost"
+proof_cost_value = "USD {usd}"
+proof_unread_label = "Threads not read"
+proof_unread_value = "{read_failed}"
+proof_results_link = "Read every number and every failure in the test results"
+faq_title = "Questions a maintainer asks first"
+demo_title = "Run it yourself with one command."
+demo_lede = "Needs Docker only. It runs the real pipeline on the synthetic sample repository: one reader subagent per thread, the quote check, the rules and the drafter. Every model answer is replayed from recordings; the container has no network and no key."
+demo_command_label = "Key-free demo"
+demo_command = "demo/run.sh"
+demo_copy = "Copy"
+demo_copied = "Copied"
+demo_alt = "Without Docker, the same sample runs on saved readings with no model at all."
+demo_alt_label = "Without Docker"
+demo_alt_command = "uv sync && uv run followthrough sweep --fixture --lang en"
+demo_guide = "Read the demo guide"
+problem_title = "Busy repositories write their follow-up rules down, then track them by hand."
+problem_text = "The OpenMinion repository opened 188 issues and 318 pull requests in the 31 days to 17 November 2026, and had 107 open items on 18 November. Its CONTRIBUTING guide already says when to follow up."
+problem_close = "Follow-Through turns those sentences into dated actions, and every date it shows can be traced back to a real comment."
+problem_rules_label = "CONTRIBUTING rule and the action it becomes"
+results_title = "Measured on a real repository, failures included."
+results_lede = "Copied from the test results: the offline suite, the sandbox demo and the read-only live sweeps on openminion/openminion."
+demo_video = "Watch the demo video"
+
+[[landing.how_steps]]
+title = "Read the changed threads"
+text = "One OpenMinion subagent per changed issue thread works out who is waiting on whom: the maintainer, the contributor, a release, nobody, or unclear."
+sample = "6 open threads read"
+
+[[landing.how_steps]]
+title = "Check every quote"
+text = "Each date the model relies on must come with a quote that appears word for word in a real comment, dated at that comment's own time. Otherwise the reading is rejected and counted."
+sample = "Quote check: 0 of 6 rejected"
+
+[[landing.how_steps]]
+title = "Apply your rules"
+text = "Deterministic rules with a clock you can set turn the readings into five actions: follow-up due, take-over allowed, maintainer reply pending, ready to verify, no action."
+sample = "#101 Follow-up due, maintainer request unanswered since 2026-11-02"
+
+[[landing.how_steps]]
+title = "Draft, then ask a person"
+text = "A draft of up to 120 words cites the CONTRIBUTING step and every computed date. Nothing is posted until a person answers allow_once, and a ledger holds back a second reminder until the thread changes."
+sample = "allow_once or deny"
+
+[[landing.proof_measured]]
+lead = "282 tests pass offline."
+text = "In public CI with no key and no network. CI also runs the fixture sweep in both languages and the key-free Docker demo."
+
+[[landing.proof_measured]]
+lead = "deny posts nothing."
+text = "In the sandbox demo, allow_once posted exactly 1 comment, byte-identical to the saved draft, and a stop file ended the run before any request."
+
+[[landing.proof_measured]]
+lead = "A quiet second sweep makes 0 drafts."
+text = "With nothing changed, the reminder ledger holds every draft back; one changed thread makes exactly 1."
+
+[[landing.proof_measured]]
+lead = "Only GET requests on openminion/openminion."
+text = "0 writes in every read-only live sweep, each under USD 1.00. The final run read 32 of 134 open threads before its time limit."
+
+[[landing.proof_measured]]
+lead = "The quote check rejected 22 of 41 fresh readings."
+text = "Almost all because the model gave a follow-up time that matches no maintainer post. Those threads are marked unclear instead of guessed."
+
+[[landing.problem_rules]]
+rule = "Follow up after 7 calendar days without a reply."
+code = "FOLLOW_UP_DUE"
+action = "Follow-up due"
+
+[[landing.problem_rules]]
+rule = "Ask for an update when an agreed date slips."
+code = "FOLLOW_UP_DUE"
+action = "Follow-up due"
+
+[[landing.problem_rules]]
+rule = "Allow 3 calendar days after a follow-up before taking work over."
+code = "TAKEOVER_ALLOWED"
+action = "Take-over allowed"
+
+[[landing.problem_rules]]
+rule = "Keep fixed issues open with status:awaiting-release until the fix is checked in a release."
+code = "READY_TO_VERIFY"
+action = "Ready to verify"
+
+[landing.faq]
+# Numbered pairs: q1 + a1, q2 + a2, … shown in number order. Answers repeat facts from the README and the test results.
+q1 = "Does it ever post a comment on its own?"
+a1 = "No. The one write path checks a stop file first, then an allow-list, then asks a person to answer allow_once or deny. No answer means no post. The shipped allow-list holds only the project's own sandbox repository."
+q2 = "What does it read, and how?"
+a2 = "Public GitHub data, with GET requests only. It reads the issue threads that changed since the last sweep and the repository's CONTRIBUTING follow-up rules."
+q3 = "How does it avoid made-up dates?"
+a3 = "Every date the model relies on comes with a quote. The quote must appear word for word in one real comment, and the date must be that comment's own time. Otherwise the reading is rejected, the thread is marked unclear, and the rejection is counted."
+q4 = "Will it remind the same thread twice?"
+a4 = "Not while nothing changes. A ledger keyed on each thread's state (update time, comment count, labels) holds back a second draft until something changes or the entry expires."
+q5 = "What does a sweep cost?"
+a5 = "Spend is capped at USD 1.00 per sweep and USD 20.00 in total, set in config/budget.toml; a sweep that would cross either stops with a message. The sample on this page was made from saved readings, with no model at all."
+q6 = "How well does it match a repository's own labels?"
+a6 = "Not well yet. Agreement with OpenMinion's status labels was 0.171 and 0.204 after the quote check in two test runs, against a target of 0.80, and no live sweep read every open thread within 20 minutes. Both are listed in the test results."
+q7 = "Is this an official OpenMinion or Cortensor project?"
+a7 = "No. It is an unofficial entry to Cortensor Hackathon #5, not affiliated with, endorsed by, or supported by the OpenMinion or Cortensor teams."
