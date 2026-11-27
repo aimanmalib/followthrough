@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-tema="light">
+<head>
+<meta charset="utf-8">
+<title>Follow-Through</title>
+<!-- Social card (1200 x 630), rendered by scripts/shots.py; not published. Same tokens and device frames as the landing page. -->
+<link rel="stylesheet" href="token.css">
+<link rel="stylesheet" href="landing.css">
+<style>
+  html, body { width: 1200px; height: 630px; margin: 0; overflow: hidden; }
+  body { position: relative; font-size: var(--saiz-desktop-badan); }
+  .card-text { position: absolute; left: calc(var(--jarak-unit) * 8); top: calc(var(--jarak-unit) * 7); bottom: calc(var(--jarak-unit) * 7);
+    width: calc(var(--jarak-unit) * 74); display: flex; flex-direction: column; justify-content: space-between; }
+  .card-brand { display: flex; align-items: center; gap: calc(var(--jarak-unit) * 1.5); font-weight: 750; font-size: 1.9em; letter-spacing: -0.02em; }
+  .card-text h1 { font-size: calc(var(--jarak-unit) * 7.25); line-height: 1.02; letter-spacing: -0.035em; }
+  .card-host { display: flex; align-items: center; gap: var(--jarak-unit); font: var(--saiz-desktop-badan)/1 var(--fon-mono); color: var(--teks-redup); }
+  .card-host::before { content: ""; width: calc(var(--jarak-unit) * 1.25); height: calc(var(--jarak-unit) * 1.25); border-radius: 50%; background: var(--aksen); }
+  .card-stage { position: absolute; left: calc(var(--jarak-unit) * 88); top: calc(var(--jarak-unit) * 7); width: calc(var(--jarak-unit) * 80); }
+  .card-stage .browser > img { max-height: none; }
+  .card-stage .phone { position: absolute; left: calc(var(--jarak-unit) * -6); top: calc(var(--jarak-unit) * 14); width: calc(var(--jarak-unit) * 27); }
+</style>
+</head>
+<body>
+  <div class="card-text">
+    <div class="card-brand"><!--logo--><span>Follow-Through</span></div>
+    <h1>{{hero_title}}</h1>
+    <p class="card-host">{{@host}}</p>
+  </div>
+  <div class="card-stage" aria-hidden="true">
+    <figure class="browser">
+      <div class="bar"><i></i><i></i><i></i><span>{{@host}}/digest/</span></div>
+      <img src="{{@browser.light}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="">
+    </figure>
+    <figure class="phone">
+      <img src="{{@phone.light}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="">
+    </figure>
+  </div>
+</body>
+</html>

@@ -43,18 +43,29 @@ not change: its body is the agent's output.
 - **robots.txt.** A GitHub project site cannot serve `/robots.txt` at the host root, and the root returns 404, so no
   crawler or link-preview bot is blocked. No placeholder `robots.txt` is published.
 
+- **Screenshots and the social card.** `scripts/shots.py SITE_DIR` (Playwright WebKit and Pillow, run on a developer
+  machine) photographs the built English fixture digest in the light and dark schemes: the phone frame on an iPhone 13
+  (saved at twice its CSS size, 780 x 1688), the browser frame in a 960 x 760 window at scale 2 (saved at 1440 x 1140).
+  A 1440 px window would show the digest's 46rem column at half size inside the frame, so the window is narrower. Each
+  WebP stays within `[shots] max_kb`. The same run renders `docs/site/og.html` (the hero line, the logo and both
+  frames, with the landing page's own tokens and styles) at 1200 x 630 and saves `docs/images/og.png`, the preview
+  image of every page. The card page is not published. Sizes, file names and budgets live in `config/pages.toml`
+  (`[landing.shots]`, `[shots]`); `tests/test_shots.py` checks the committed files against them.
+
 Browser checks (`scripts/check_page.py`: Chromium and WebKit, iPhone 13, 320 px and 1440 px, light and dark, every
 question opened, and the empty and error states forced) run on a developer machine, outside pytest, because Playwright is not a project dependency; the pytest suite checks the built HTML, not a browser.
 
 ## Consequences
 
 - Old links to `/` and `/ms/` now land on the product page, which links to the digest in its first screen.
-- The hero screenshots are static files in `docs/site/shots/`; they must be retaken when the digest page changes.
+- The hero screenshots and the social card are static files (`docs/site/shots/`, `docs/images/og.png`); after a change
+  to the digest page, rerun `scripts/shots.py` on a fresh build and commit the results.
 
 ## Rollback
 
 To drop only the sections and the panel, revert the commit that adds them: the page returns to the hero alone and
 `summary.json` is no longer written. To drop the landing page, revert the commit that adds this ADR: `config/pages.toml` returns to `paths` only, `scripts/build_pages.py` copies the
 digest to `/` and `/ms/` again, and `.github/workflows/pages.yml` expects two pages. `docs/site/`,
-`scripts/build_landing.py`, `brand/identity.json` and `tests/test_landing.py` can then be deleted. The live site can
+`scripts/build_landing.py`, `brand/identity.json` and `tests/test_landing.py` can then be deleted. To return to the earlier
+screenshots and the digest-only preview image, revert the commit that adds `scripts/shots.py`. The live site can
 also be put back without a commit by re-running the last successful `pages` workflow run of the earlier commit.

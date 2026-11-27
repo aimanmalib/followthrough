@@ -43,13 +43,13 @@
         <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>{{@digest_host}}</span></div>
         <img class="when-light" src="{{@assets}}{{@browser.light}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="{{alt_browser}}" fetchpriority="high">
         <!--if @browser.dark-->
-        <img class="when-dark" src="{{@assets}}{{@browser.dark}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="" loading="lazy">
+        <img class="when-dark" src="{{@assets}}{{@browser.dark}}" width="{{@browser.width}}" height="{{@browser.height}}" alt="{{alt_browser}}">
         <!--/if-->
       </figure>
       <figure class="phone">
         <img class="when-light" src="{{@assets}}{{@phone.light}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="{{alt_phone}}">
         <!--if @phone.dark-->
-        <img class="when-dark" src="{{@assets}}{{@phone.dark}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="" loading="lazy">
+        <img class="when-dark" src="{{@assets}}{{@phone.dark}}" width="{{@phone.width}}" height="{{@phone.height}}" alt="{{alt_phone}}">
         <!--/if-->
       </figure>
     </div>

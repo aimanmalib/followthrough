@@ -6,9 +6,10 @@ paths = { en = "", ms = "ms/" }
 # Language -> path for the fixture digest pages (body unchanged, see ADR 0017).
 digest_paths = { en = "digest/", ms = "ms/digest/" }
 # Repository files copied next to the pages; social cards and the tab icon point at the copies.
-image = "docs/images/digest-desktop.png"
-image_width = 880
-image_height = 932
+# The social card is made by scripts/shots.py from [shots.og]; keep image_width/height at the card size.
+image = "docs/images/og.png"
+image_width = 1200
+image_height = 630
 image_alt_key = "pages.image_alt"
 icon = "brand/logo-64.png"
 
@@ -33,13 +34,38 @@ actions = ["FOLLOW_UP_DUE", "TAKEOVER_ALLOWED", "MAINTAINER_REPLY_PENDING", "REA
 # localStorage key that remembers the visitor's light/dark choice.
 theme_storage_key = "followthrough-theme"
 
-# Screenshots in the hero frames (paths under source_dir). `dark` is optional; without it the light image shows in both schemes.
+# Screenshots in the hero frames (paths under source_dir), made by scripts/shots.py at width x height pixels.
+# `dark` is optional; without it the light image shows in both schemes.
 [landing.shots.browser]
 light = "shots/digest-desktop-light.webp"
-width = 880
-height = 932
+dark = "shots/digest-desktop-dark.webp"
+width = 1440
+height = 1140
 
 [landing.shots.phone]
-light = "shots/digest-phone-dark.webp"
-width = 390
-height = 844
+light = "shots/digest-phone-light.webp"
+dark = "shots/digest-phone-dark.webp"
+width = 780
+height = 1688
+
+# scripts/shots.py (host tool): which digest it photographs, how each frame is captured, and the WebP budget.
+[shots]
+lang = "en"
+quality = 82
+max_kb = 80
+
+# A desktop window narrower than 1440 px: the digest is a 46rem column, so a 1440 px window would show it at half size.
+[shots.browser]
+viewport = { width = 960, height = 760 }
+scale = 2
+
+[shots.phone]
+device = "iPhone 13"
+
+# The social card: a page rendered from `template` (under source_dir) at image_width x image_height, saved as `image`.
+[shots.og]
+template = "og.html"
+page = "og-card.html"
+scheme = "light"
+logo_size = 56
+max_kb = 300

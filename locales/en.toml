@@ -141,7 +141,7 @@ made_by = "followthrough {version} · built on the OpenMinion SDK"
 
 [pages]
 description = "An agent that applies a repository's CONTRIBUTING follow-up rules every day and drafts each follow-up for a human to approve. Sample digest for a synthetic repository."
-image_alt = "The Follow-Through digest for the synthetic sample repository: follow-ups due, take-overs allowed, replies pending and fixes to verify."
+image_alt = "Follow-Through: your follow-up rules, applied every day, with a human approving every comment. Next to it, the digest for the synthetic sample repository in a browser and on a phone."
 
 [landing]
 title = "Follow-Through: your CONTRIBUTING follow-up rules, applied every day"
@@ -160,7 +160,7 @@ cta_primary = "See the digest"
 cta_secondary = "Run the demo"
 hero_note = "The digest shown here is the sample for a synthetic repository, rebuilt from main on every push."
 alt_browser = "The digest page for the synthetic sample repository: 2 follow-ups due, 1 take-over allowed, 1 maintainer reply pending, 1 ready to verify and 1 with no action, each thread with the date that drives it."
-alt_phone = "The same digest on an iPhone 13 in the dark scheme."
+alt_phone = "The same digest on an iPhone 13."
 footer_note = "MIT licence. Built for Cortensor Hackathon #5. Unofficial: not affiliated with the OpenMinion or Cortensor teams."
 footer_code = "Source on GitHub"
 nav_how = "How it works"
