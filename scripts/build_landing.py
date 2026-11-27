@@ -85,11 +85,15 @@ def relative(page: str, target: str) -> str:
 
 
 def locale(lang: str, root: Path = ROOT, order: list[str] | None = None) -> dict[str, Any]:
-    """The [landing] text for `lang`: the numbered `faq` table (q1/a1, q2/a2, …) as a list in number order, plus
-    `actions`: the digest's own action labels in `order`."""
+    """The [landing] text for `lang`. Locale values stay plain strings, so lists are written as numbered tables:
+    `[landing.<list>.1]`, … become a list in file order, the `faq` pairs q1/a1, q2/a2, … a list in number order.
+    `actions` adds the digest's own action labels in `order`."""
     with open(root / "locales" / f"{lang}.toml", "rb") as fh:
         data = tomllib.load(fh)
     text = dict(data["landing"])
+    for key, value in text.items():  # [landing.<list>.1], [landing.<list>.2], … : a list, in file order
+        if isinstance(value, dict) and value and all(isinstance(v, dict) for v in value.values()):
+            text[key] = list(value.values())
     faq = text.get("faq", {})
     numbers = sorted({int(k[1:]) for k in faq if re.fullmatch(r"q\d+", k)})
     text["faq"] = [{"q": faq[f"q{n}"], "a": faq[f"a{n}"]} for n in numbers]

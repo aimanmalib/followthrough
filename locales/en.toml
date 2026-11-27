@@ -204,62 +204,62 @@ results_title = "Measured on a real repository, failures included."
 results_lede = "Copied from the test results: the offline suite, the sandbox demo and the read-only live sweeps on openminion/openminion."
 demo_video = "Watch the demo video"
 
-[[landing.how_steps]]
+[landing.how_steps.1]
 title = "Read the changed threads"
 text = "One OpenMinion subagent per changed issue thread works out who is waiting on whom: the maintainer, the contributor, a release, nobody, or unclear."
 sample = "6 open threads read"
 
-[[landing.how_steps]]
+[landing.how_steps.2]
 title = "Check every quote"
 text = "Each date the model relies on must come with a quote that appears word for word in a real comment, dated at that comment's own time. Otherwise the reading is rejected and counted."
 sample = "Quote check: 0 of 6 rejected"
 
-[[landing.how_steps]]
+[landing.how_steps.3]
 title = "Apply your rules"
 text = "Deterministic rules with a clock you can set turn the readings into five actions: follow-up due, take-over allowed, maintainer reply pending, ready to verify, no action."
 sample = "#101 Follow-up due, maintainer request unanswered since 2026-11-02"
 
-[[landing.how_steps]]
+[landing.how_steps.4]
 title = "Draft, then ask a person"
 text = "A draft of up to 120 words cites the CONTRIBUTING step and every computed date. Nothing is posted until a person answers allow_once, and a ledger holds back a second reminder until the thread changes."
 sample = "allow_once or deny"
 
-[[landing.proof_measured]]
+[landing.proof_measured.1]
 lead = "282 tests pass offline."
 text = "In public CI with no key and no network. CI also runs the fixture sweep in both languages and the key-free Docker demo."
 
-[[landing.proof_measured]]
+[landing.proof_measured.2]
 lead = "deny posts nothing."
 text = "In the sandbox demo, allow_once posted exactly 1 comment, byte-identical to the saved draft, and a stop file ended the run before any request."
 
-[[landing.proof_measured]]
+[landing.proof_measured.3]
 lead = "A quiet second sweep makes 0 drafts."
 text = "With nothing changed, the reminder ledger holds every draft back; one changed thread makes exactly 1."
 
-[[landing.proof_measured]]
+[landing.proof_measured.4]
 lead = "Only GET requests on openminion/openminion."
 text = "0 writes in every read-only live sweep, each under USD 1.00. The final run read 32 of 134 open threads before its time limit."
 
-[[landing.proof_measured]]
+[landing.proof_measured.5]
 lead = "The quote check rejected 22 of 41 fresh readings."
 text = "Almost all because the model gave a follow-up time that matches no maintainer post. Those threads are marked unclear instead of guessed."
 
-[[landing.problem_rules]]
+[landing.problem_rules.1]
 rule = "Follow up after 7 calendar days without a reply."
 code = "FOLLOW_UP_DUE"
 action = "Follow-up due"
 
-[[landing.problem_rules]]
+[landing.problem_rules.2]
 rule = "Ask for an update when an agreed date slips."
 code = "FOLLOW_UP_DUE"
 action = "Follow-up due"
 
-[[landing.problem_rules]]
+[landing.problem_rules.3]
 rule = "Allow 3 calendar days after a follow-up before taking work over."
 code = "TAKEOVER_ALLOWED"
 action = "Take-over allowed"
 
-[[landing.problem_rules]]
+[landing.problem_rules.4]
 rule = "Keep fixed issues open with status:awaiting-release until the fix is checked in a release."
 code = "READY_TO_VERIFY"
 action = "Ready to verify"

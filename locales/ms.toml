@@ -204,62 +204,62 @@ results_title = "Diukur pada repositori sebenar, termasuk kegagalan."
 results_lede = "Disalin daripada keputusan ujian: suite tanpa rangkaian, demo kotak pasir dan sapuan langsung baca-sahaja pada openminion/openminion."
 demo_video = "Tonton video demo"
 
-[[landing.how_steps]]
+[landing.how_steps.1]
 title = "Baca benang yang berubah"
 text = "Satu subagen OpenMinion bagi setiap benang isu yang berubah menentukan siapa menunggu siapa: penyelenggara, penyumbang, keluaran, tiada sesiapa, atau tidak jelas."
 sample = "6 benang terbuka dibaca"
 
-[[landing.how_steps]]
+[landing.how_steps.2]
 title = "Semak setiap petikan"
 text = "Setiap tarikh yang dipakai model mesti datang bersama petikan yang wujud kata demi kata dalam komen sebenar, bertarikh masa komen itu sendiri. Jika tidak, bacaan ditolak dan dikira."
 sample = "Semakan petikan: 0 daripada 6 ditolak"
 
-[[landing.how_steps]]
+[landing.how_steps.3]
 title = "Jalankan peraturan anda"
 text = "Peraturan berketentuan dengan jam yang boleh ditetapkan menukar bacaan kepada lima tindakan: susulan perlu dihantar, boleh diambil alih, menunggu jawapan penyelenggara, sedia untuk disahkan, tiada tindakan."
 sample = "#101 Susulan perlu dihantar, permintaan penyelenggara tidak dijawab sejak 2026-11-02"
 
-[[landing.how_steps]]
+[landing.how_steps.4]
 title = "Draf, kemudian tanya manusia"
 text = "Draf paling banyak 120 patah perkataan memetik langkah CONTRIBUTING dan setiap tarikh yang dikira. Tiada apa dipos sehingga manusia menjawab allow_once, dan lejar menahan peringatan kedua sehingga benang berubah."
 sample = "allow_once atau deny"
 
-[[landing.proof_measured]]
+[landing.proof_measured.1]
 lead = "282 ujian lulus tanpa rangkaian."
 text = "Dalam CI awam tanpa kunci dan tanpa rangkaian. CI juga menjalankan sapuan fixture dalam kedua-dua bahasa dan demo Docker tanpa kunci."
 
-[[landing.proof_measured]]
+[landing.proof_measured.2]
 lead = "deny tidak mengepos apa-apa."
 text = "Dalam demo kotak pasir, allow_once mengepos tepat 1 komen, sama bait demi bait dengan draf tersimpan, dan fail henti menamatkan larian sebelum sebarang permintaan."
 
-[[landing.proof_measured]]
+[landing.proof_measured.3]
 lead = "Sapuan kedua yang senyap membuat 0 draf."
 text = "Tanpa perubahan, lejar peringatan menahan setiap draf; satu benang yang berubah membuat tepat 1."
 
-[[landing.proof_measured]]
+[landing.proof_measured.4]
 lead = "Hanya permintaan GET pada openminion/openminion."
 text = "0 tulisan dalam setiap sapuan langsung baca-sahaja, setiap satu di bawah USD 1.00. Larian terakhir membaca 32 daripada 134 benang terbuka sebelum had masanya."
 
-[[landing.proof_measured]]
+[landing.proof_measured.5]
 lead = "Semakan petikan menolak 22 daripada 41 bacaan baharu."
 text = "Hampir semuanya kerana model memberi masa susulan yang tidak sepadan dengan mana-mana pos penyelenggara. Benang itu ditanda tidak jelas, bukan diteka."
 
-[[landing.problem_rules]]
+[landing.problem_rules.1]
 rule = "Buat susulan selepas 7 hari kalendar tanpa jawapan."
 code = "FOLLOW_UP_DUE"
 action = "Susulan perlu dihantar"
 
-[[landing.problem_rules]]
+[landing.problem_rules.2]
 rule = "Minta kemas kini apabila tarikh yang dipersetujui terlepas."
 code = "FOLLOW_UP_DUE"
 action = "Susulan perlu dihantar"
 
-[[landing.problem_rules]]
+[landing.problem_rules.3]
 rule = "Beri 3 hari kalendar selepas susulan sebelum mengambil alih kerja."
 code = "TAKEOVER_ALLOWED"
 action = "Boleh diambil alih"
 
-[[landing.problem_rules]]
+[landing.problem_rules.4]
 rule = "Biarkan isu yang dibaiki terbuka dengan status:awaiting-release sehingga pembaikan disemak dalam keluaran."
 code = "READY_TO_VERIFY"
 action = "Sedia untuk disahkan"
