@@ -157,6 +157,17 @@ def test_page_styles_use_only_tokens(css: str) -> None:
     assert not COLOUR.search(text), COLOUR.search(text)
 
 
+def test_one_column_hero_shows_the_product_before_the_lede() -> None:
+    """On phones the frames sit right after the headline and actions, so the real digest is on the first screen."""
+    css = re.sub(r"/\*.*?\*/", "", (SITE_SRC / "landing.css").read_text(encoding="utf-8"), flags=re.S)
+    block = re.search(r"@media \(max-width: 959px\) \{(.*?)\n\}", css, flags=re.S)
+    assert block, "no one-column hero rule"
+    rules = block.group(1)
+    assert re.search(r"\.hero-text \{ display: contents; \}", rules)
+    order = {name: int(re.search(rf"\.hero \.{name} \{{ order: (\d+);", rules).group(1)) for name in ("actions", "stage", "lede", "note")}
+    assert order["actions"] < order["stage"] < order["lede"] < order["note"], order
+
+
 def test_no_blur_glass_or_shouting_labels() -> None:
     for path in SITE_SRC.glob("*.*"):
         if path.suffix not in {".css", ".html", ".js"}:

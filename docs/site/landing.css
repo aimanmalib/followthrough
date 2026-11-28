@@ -73,6 +73,17 @@ p { margin: 0; text-wrap: pretty; }
 .stage .phone { position: absolute; left: 0; bottom: 0; width: 34%; min-width: calc(var(--jarak-unit) * 14); animation: enter .9s .18s cubic-bezier(.16, 1, .3, 1) backwards; }
 .stage .browser { animation: enter .9s cubic-bezier(.16, 1, .3, 1) backwards; }
 @keyframes enter { from { transform: translateY(calc(var(--jarak-unit) * 4)); opacity: .35; } }
+/* One column (phones, small tablets): headline, then the two actions, then the product, so the real digest is on the first
+   screen; the lede and the note that describes the sample follow the frames. Reading order in the markup is unchanged. */
+@media (max-width: 959px) {
+  .hero { gap: 0; }
+  .hero-text { display: contents; }
+  .hero-text > * { min-width: 0; }
+  .hero .actions { order: 1; margin-top: calc(var(--jarak-unit) * 3); }
+  .hero .stage { order: 2; margin-top: calc(var(--jarak-unit) * 5); }
+  .hero .lede { order: 3; margin-top: calc(var(--jarak-unit) * 6); }
+  .hero .note { order: 4; }
+}
 @media (min-width: 960px) {
   .hero { grid-template-columns: 6fr 6fr; align-items: center; gap: calc(var(--jarak-unit) * 8);
     padding-block: calc(var(--jarak-unit) * 6) calc(var(--jarak-bahagian) * 1.5); }
